@@ -1,0 +1,200 @@
+.emergency-page {
+    min-height: 100vh;
+    background: #0f1419;
+    padding: var(--spacing-xl) 0;
+}
+
+.emergency-page .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.emergency-alert {
+    text-align: center;
+    padding: 48px;
+    background: linear-gradient(135deg, #ef4444, #f59e0b);
+    border-radius: 16px;
+    margin-bottom: 48px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.emergency-alert h1 {
+    color: white;
+    margin-bottom: 16px;
+    font-size: 2.5rem;
+}
+
+.emergency-alert p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+}
+
+/* ============================================
+   EMERGENCY CONTACTS
+   ============================================ */
+
+.emergency-contacts {
+    margin-bottom: 48px;
+}
+
+.emergency-contacts h2 {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.contacts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.contact-card {
+    padding: var(--spacing-xl);
+    text-align: center;
+    border: 2px solid #ef4444;
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.contact-card h3 {
+    margin-bottom: 24px;
+    font-size: 1.1rem;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.contact-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ef4444;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.contact-number:hover {
+    color: #f59e0b;
+}
+
+.contact-availability {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+/* ============================================
+   EMERGENCY RESOURCES
+   ============================================ */
+
+.emergency-resources {
+    margin-bottom: 48px;
+}
+
+.emergency-resources h2 {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.resources-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+}
+
+.resource-item {
+    padding: 24px;
+    text-align: center;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.resource-item h3 {
+    margin-bottom: 16px;
+}
+
+.resource-item p {
+    margin-bottom: 0;
+    color: #cbd5e1;
+}
+
+/* ============================================
+   COPING STRATEGIES
+   ============================================ */
+
+.coping-strategies {
+    margin-bottom: 48px;
+}
+
+.coping-strategies h2 {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.strategies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+}
+
+.strategy {
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 16px;
+}
+
+.strategy h3 {
+    margin-bottom: 8px;
+    color: #10b981;
+}
+
+.strategy p {
+    margin-bottom: 0;
+    color: #cbd5e1;
+    font-size: 0.95rem;
+}
+
+/* ============================================
+   IMPORTANT MESSAGE
+   ============================================ */
+
+.important-message {
+    padding: 48px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+    border: 2px solid rgba(236, 72, 153, 0.3);
+    margin-bottom: 48px;
+}
+
+.important-message h2 {
+    color: #ec4899;
+    margin-bottom: 24px;
+}
+
+.important-message p {
+    font-size: 1.05rem;
+    color: #cbd5e1;
+    line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+    .emergency-page {
+        padding: 24px 0;
+    }
+
+    .emergency-alert {
+        padding: 24px;
+    }
+
+    .emergency-alert h1 {
+        font-size: 1.75rem;
+    }
+
+    .contacts-grid,
+    .resources-list,
+    .strategies-grid {
+        grid-template-columns: 1fr;
+    }
+}

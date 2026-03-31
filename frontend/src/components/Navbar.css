@@ -1,0 +1,153 @@
+.navbar {
+    background: linear-gradient(135deg, rgba(26, 31, 46, 0.95), rgba(36, 45, 61, 0.95));
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+    color: #818cf8;
+    transform: translateY(-2px);
+}
+
+.brand-icon {
+    font-size: 2rem;
+}
+
+.brand-text {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    list-style: none;
+}
+
+.nav-link {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.nav-link:hover {
+    color: #818cf8;
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.hamburger {
+    width: 24px;
+    height: 2px;
+    background: #f1f5f9;
+    transition: all 0.3s ease;
+    display: block;
+    border-radius: 1px;
+}
+
+.hamburger::before,
+.hamburger::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: #f1f5f9;
+    border-radius: 1px;
+    margin-top: 6px;
+    transition: all 0.3s ease;
+}
+
+.hamburger.active {
+    transform: rotate(45deg);
+    margin-top: 12px;
+}
+
+.hamburger.active::before {
+    display: none;
+}
+
+.hamburger.active::after {
+    transform: rotate(-90deg);
+    margin-top: -8px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .nav-toggle {
+        display: flex;
+    }
+
+    .nav-menu {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: #1a1f2e;
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        flex-direction: column;
+        gap: 16px;
+        padding: 24px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+
+    .nav-menu.active {
+        max-height: 500px;
+    }
+
+    .nav-link {
+        width: 100%;
+        padding: 16px;
+    }
+
+    .navbar-container {
+        padding: 0 16px;
+    }
+
+    .navbar-brand {
+        font-size: 1.25rem;
+        gap: 8px;
+    }
+}

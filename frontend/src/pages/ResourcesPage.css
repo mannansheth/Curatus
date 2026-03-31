@@ -1,0 +1,130 @@
+.resources-page {
+    min-height: 100vh;
+    background: var(--color-bg-primary);
+    padding: var(--spacing-xl) 0;
+}
+
+.resources-page .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+.resources-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+}
+
+.resources-header h1 {
+    margin-bottom: var(--spacing-md);
+}
+
+.resources-header p {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+}
+
+.resource-category {
+    margin-bottom: var(--spacing-2xl);
+}
+
+.category-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.category-icon {
+    font-size: 2rem;
+}
+
+.category-title h2 {
+    margin: 0;
+}
+
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.article-card {
+    padding: var(--spacing-lg);
+}
+
+.article-card h3 {
+    margin-bottom: var(--spacing-md);
+}
+
+.article-card p {
+    margin-bottom: var(--spacing-lg);
+}
+
+.read-more {
+    color: var(--color-primary-light);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.read-more:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+}
+
+/* ============================================
+   WELLNESS TIPS
+   ============================================ */
+
+.wellness-tips {
+    margin-bottom: var(--spacing-2xl);
+}
+
+.wellness-tips h2 {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+}
+
+.tips-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.tip-card {
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+}
+
+.tip-card:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+    border-color: var(--color-primary);
+    transform: translateY(-4px);
+}
+
+.tip-card h3 {
+    margin-bottom: var(--spacing-md);
+    font-size: 1.1rem;
+}
+
+.tip-card p {
+    margin-bottom: 0;
+    color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+    .resources-page {
+        padding: var(--spacing-lg) 0;
+    }
+
+    .articles-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tips-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

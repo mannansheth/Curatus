@@ -1,0 +1,110 @@
+.therapist-page {
+    min-height: 100vh;
+    background: var(--color-bg-primary);
+    padding: var(--spacing-xl) 0;
+}
+
+.therapist-page .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+.therapist-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+}
+
+.therapist-header h1 {
+    margin-bottom: var(--spacing-md);
+}
+
+.therapist-header p {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-2xl);
+    flex-wrap: wrap;
+}
+
+.filter-label {
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    border-color: var(--color-primary);
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--color-primary-light);
+}
+
+.therapists-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.therapist-card-item {
+    padding: var(--spacing-lg);
+    text-align: center;
+}
+
+.therapist-header-card {
+    position: relative;
+    margin-bottom: var(--spacing-md);
+}
+
+.therapist-avatar-large {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.therapist-rating {
+    color: var(--color-warning);
+    font-weight: 600;
+}
+
+.therapist-card-item h3 {
+    margin-bottom: var(--spacing-sm);
+    font-size: 1.1rem;
+}
+
+.therapist-specialty {
+    color: var(--color-primary-light);
+    font-size: 0.95rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.therapist-experience {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+    .therapists-list {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}

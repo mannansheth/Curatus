@@ -1,0 +1,284 @@
+.dashboard {
+min-height: 100vh;
+background: #0a0f2c;
+padding: 40px 0;
+}
+
+.dashboard .container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 32px;
+}
+
+.welcome-section {
+margin-bottom: 64px;
+animation: slideInUp 0.5s ease-out;
+}
+
+.welcome-content h1 {
+margin-bottom: 8px;
+color: #e5e7eb;
+}
+
+.welcome-content p {
+color: #9ca3af;
+font-size: 1.1rem;
+}
+
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 32px;
+margin-bottom: 64px;
+}
+
+.stat-card {
+text-align: center;
+padding: 40px;
+}
+
+.stat-icon {
+font-size: 2.5rem;
+margin-bottom: 16px;
+display: block;
+}
+
+.stat-card h3 {
+font-size: 2rem;
+color: #1e3a8a;
+margin-bottom: 8px;
+}
+
+.stat-card p {
+margin-bottom: 0;
+color: #9ca3af;
+font-size: 0.95rem;
+}
+
+.dashboard-grid {
+display: grid;
+grid-template-columns: 3fr 2fr;
+gap: 32px;
+margin-bottom: 64px;
+}
+
+.dashboard-section,
+.quick-actions {
+animation: slideInUp 0.5s ease-out 0.1s backwards;
+}
+
+.section-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 32px;
+}
+
+.section-header h2 {
+margin: 0;
+color: #e5e7eb;
+}
+
+.entries-list {
+display: flex;
+flex-direction: column;
+gap: 32px;
+}
+
+.entry-card {
+cursor: pointer;
+}
+
+.entry-header {
+display: flex;
+align-items: center;
+gap: 16px;
+margin-bottom: 16px;
+}
+
+.entry-mood {
+font-size: 1.5rem;
+}
+
+.entry-date {
+color: #6b7280;
+font-size: 0.9rem;
+}
+
+.entry-preview {
+color: #9ca3af;
+margin-bottom: 16px;
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+overflow: hidden;
+}
+
+.mood-score {
+display: flex;
+align-items: center;
+gap: 16px;
+}
+
+.score-bar {
+flex: 1;
+height: 6px;
+background: #111633;
+border-radius: 3px;
+overflow: hidden;
+}
+
+.score-fill {
+height: 100%;
+background: linear-gradient(90deg, #1e3a8a, #8b5cf6);
+transition: width 0.3s ease;
+}
+
+.score-text {
+font-size: 0.85rem;
+color: #6b7280;
+min-width: 45px;
+text-align: right;
+}
+
+.quick-actions h2 {
+margin-bottom: 32px;
+color: #e5e7eb;
+}
+
+.actions-list {
+display: flex;
+flex-direction: column;
+gap: 32px;
+}
+
+.action-card {
+display: flex;
+align-items: center;
+gap: 32px;
+}
+
+.action-card .card-content {
+display: flex;
+align-items: center;
+gap: 32px;
+width: 100%;
+}
+
+.action-icon {
+font-size: 2rem;
+min-width: 50px;
+text-align: center;
+}
+
+.action-card h3 {
+margin-bottom: 4px;
+font-size: 1rem;
+color: #e5e7eb;
+}
+
+.action-card p {
+margin-bottom: 0;
+font-size: 0.85rem;
+color: #9ca3af;
+}
+
+.upcoming-section {
+animation: slideInUp 0.5s ease-out 0.2s backwards;
+}
+
+.upcoming-section h2 {
+margin-bottom: 32px;
+color: #e5e7eb;
+}
+
+.appointment-card {
+padding: 40px;
+}
+
+.appointment-details {
+margin-bottom: 32px;
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+gap: 32px;
+}
+
+.therapist-info {
+display: flex;
+align-items: center;
+gap: 32px;
+flex: 1;
+}
+
+.therapist-avatar {
+width: 60px;
+height: 60px;
+border-radius: 50%;
+background: linear-gradient(135deg, #1e3a8a, #8b5cf6);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 2rem;
+flex-shrink: 0;
+}
+
+.therapist-info h3 {
+margin-bottom: 4px;
+font-size: 1.1rem;
+color: #e5e7eb;
+}
+
+.specialization {
+color: #6366f1;
+font-size: 0.9rem;
+margin-bottom: 0;
+}
+
+.appointment-time {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.time-label {
+color: #9ca3af;
+font-size: 0.95rem;
+}
+
+.appointment-actions {
+display: flex;
+gap: 16px;
+}
+
+@media (max-width: 1024px) {
+.dashboard-grid {
+grid-template-columns: 1fr;
+}
+}
+
+@media (max-width: 768px) {
+.dashboard {
+padding: 32px 0;
+}
+
+
+.stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.appointment-details {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.appointment-actions {
+    width: 100%;
+}
+
+.appointment-actions button {
+    flex: 1;
+}
+
+
+}

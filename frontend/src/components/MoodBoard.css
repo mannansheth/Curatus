@@ -1,0 +1,194 @@
+/* MoodBoard.css — wider cells, whole board + title centered */
+
+/* ── Root card ── */
+.mb-root {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 24px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: #e6edf3;
+  align-items: center;
+  /* Center the whole card horizontally */
+  display: flex;
+  margin: 0 auto 40px auto;
+  width: 100%;
+  max-width: calc(100%);
+  box-sizing: border-box;
+}
+
+/* ── Header ── */
+.mb-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.mb-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e6edf3;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+.mb-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #7d8590;
+}
+
+.mb-stat {
+  color: #7d8590;
+}
+
+.mb-stat strong {
+  color: #e6edf3;
+  font-weight: 600;
+}
+
+.mb-dot {
+  color: #30363d;
+}
+
+/* ── Grid wrapper ── */
+.mb-grid-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ── Day-of-week labels ── */
+.mb-day-labels {
+  display: grid;
+  grid-template-columns: repeat(7, 56px);
+  gap: 6px;
+}
+
+.mb-day-label {
+  font-size: 11px;
+  color: #7d8590;
+  text-align: center;
+  line-height: 1;
+  user-select: none;
+}
+
+/* ── Contributions grid ── */
+.mb-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 56px);
+  gap: 6px;
+}
+
+/* ── Cell ── */
+.mb-cell {
+  width: 56px;
+  height: 56px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  transition: transform 0.1s ease, outline 0.1s ease;
+  outline: 2px solid transparent;
+  outline-offset: 1px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.mb-cell:not(.mb-cell-empty):hover {
+  transform: scale(1.12);
+  outline: 2px solid rgba(255, 255, 255, 0.45);
+  z-index: 2;
+}
+
+.mb-cell-empty {
+  background: transparent !important;
+  pointer-events: none;
+}
+
+/* ── Emoji ── */
+.mb-emoji {
+  font-size: 18px;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Legend ── */
+.mb-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 2px;
+  width: 100%;
+}
+
+.mb-legend-label {
+  font-size: 11px;
+  color: #7d8590;
+  min-width: 12px;
+  text-align: center;
+}
+
+.mb-legend-track {
+  display: flex;
+  gap: 2px;
+}
+
+.mb-legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.mb-legend-note {
+  font-size: 11px;
+  color: #7d8590;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .mb-root {
+    width: calc(100% - 24px);
+    max-width: 100%;
+    padding: 16px;
+  }
+
+  .mb-day-labels,
+  .mb-grid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .mb-cell {
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+    border-radius: 4px;
+    position: relative;
+  }
+
+  .mb-emoji {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+  }
+
+  .mb-day-label {
+    font-size: 10px;
+  }
+}
