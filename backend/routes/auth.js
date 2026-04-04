@@ -33,7 +33,7 @@ router.post("/signup", async (req, res) => {
     );
 
     const token = jwt.sign(
-      { id: result.insertId, email },
+      { id: result.insertId, email, role:"user" },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -45,6 +45,7 @@ router.post("/signup", async (req, res) => {
         id: result.insertId,
         name,
         email,
+        role:"user"
       },
     });
 
@@ -88,12 +89,15 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    const [isTherapistRows] = await db.query("SELECT 1 FROM therapists WHERE userID = ? LIMIT 1;", [user.ID])
+    const isTherapist = isTherapistRows.length > 0;
+  
     const token = jwt.sign(
-      { id: user.ID, email: user.Email },
+      { id: user.ID, email: user.Email, role: isTherapist ? "therapist" : "user" },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
-
+    
     res.json({
       success:true,
       message: "Login successful",
@@ -102,6 +106,7 @@ router.post("/login", async (req, res) => {
         id: user.ID,
         name: user.Name,
         email: user.Email,
+        role: isTherapist ? "therapist" : "user"
       },
     });
 
@@ -113,6 +118,64 @@ router.post("/login", async (req, res) => {
       });
     }
 });
+
+router.post("/therapist-signup", async (req, res) => {
+  const { email, password, name, phone, specialization, yearsOfExperience, bio, city, address, consultationFee, mode,  availableDays, startTime, endTime, degree, certifications } = req.body;
+
+  try {
+
+    const [existingUser] = await db.query(
+    "SELECT * FROM users WHERE email = ?",
+    [email]
+    );
+
+
+    if (existingUser.length > 0) {
+      return res.status(400).json({
+        message: "User already exists",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const [result] = await db.query(
+      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+      [name, email, hashedPassword]
+    );
+    const days = availableDays.join(" ");
+    const [result2] = await db.query(
+      "INSERT INTO therapists (userID, phone, specialization, yearsOfExperience, bio, city, address, consultationFee, mode,  availableDays, startTime, endTime, degree, certifications) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [result.insertId, phone, specialization, yearsOfExperience, bio, city, address, consultationFee, mode, days , startTime, endTime, degree, certifications]
+    )
+
+    const token = jwt.sign(
+      { id: result.insertId, email, role: "therapist" },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    
+
+    res.status(201).json({
+      message: "User created successfully",
+      token,
+      user: {
+        id: result.insertId,
+        name,
+        email,
+        role:"therapist"
+      },
+    });
+
+
+  } catch (err) {
+    console.error("Signup Error:", err);
+    res.status(500).json({
+    message: "Server error during signup",
+  });
+  }
+});
+
 
 router.get("/me", async (req, res) => {
   try {
@@ -135,7 +198,7 @@ router.get("/me", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json(users[0]);
+    res.json({...users[0], role: decoded.role});
 
   } catch (err) {
     console.error("Auth Me Error:", err);

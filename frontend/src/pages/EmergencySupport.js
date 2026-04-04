@@ -4,9 +4,9 @@ import './EmergencySupport.css';
 
 function EmergencySupport() {
   const emergencyContacts = [
-    { name: 'National Suicide Prevention Lifeline', number: '988', available: '24/7' },
-    { name: 'Crisis Text Line', number: 'Text HOME to 741741', available: '24/7' },
-    { name: 'NAMI Helpline', number: '1-800-950-NAMI', available: '10 AM - 10 PM EST' },
+    { name: 'Kiran Mental Health Helpline (Govt. of India)', number: '1800-599-0019', available: '24/7' },
+    { name: 'AASRA Suicide Prevention Helpline', number: '91-9820466726', available: '24/7' },
+    { name: 'Vandrevala Foundation Helpline', number: '9999666555', available: '24/7 (Call & WhatsApp)' },
   ];
 
   return (
@@ -14,7 +14,7 @@ function EmergencySupport() {
       <div className="container">
         <div className="emergency-alert">
           <h1>🚨 Crisis Support</h1>
-          <p>If you&apos;re in immediate danger, please call 911 or your local emergency services</p>
+          <p>If you're in immediate danger, please call 112 (India Emergency Helpline)</p>
         </div>
 
         {/* Emergency Contacts */}
@@ -56,7 +56,7 @@ function EmergencySupport() {
             <Card className="resource-item">
               <CardContent>
                 <h3>🏥 Emergency Services</h3>
-                <p>Go to your nearest emergency room or call 911 for immediate assistance</p>
+                <p>Go to your nearest hospital or call 112 for immediate assistance</p>
               </CardContent>
             </Card>
             <Card className="resource-item">

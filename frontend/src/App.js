@@ -17,6 +17,8 @@ import ProfileSettings from './pages/ProfileSettings';
 import Toast from './components/Toast';
 
 import api from './services/api';
+import TherapistSignup from './pages/TherapistSignup';
+import Assessment from './pages/Assessment';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -24,7 +26,7 @@ function App() {
   const [toast, setToast] = useState(null);
   const [loadingAuth, setLoadingAuth] = useState(true);
 
-  // 🔐 ProtectedRoute inside App
+  
   const ProtectedRoute = ({ children }) => {
   if (!isAuthenticated) {
   return <Navigate to="/login" />;
@@ -57,8 +59,6 @@ function App() {
     };
 
     fetchUser();
-
-
   }, []);
 
   const handleLogout = () => {
@@ -105,7 +105,16 @@ function App() {
             )
           }
         />
+        <Route 
+          path='/therapist-signup'
+          element={
+            <TherapistSignup 
+                setUser={setUser}
+                setIsAuthenticated={setIsAuthenticated}
+                showToast={showToast}/>
 
+          }
+          ></Route>
         <Route
           path="/dashboard"
           element={
@@ -114,29 +123,40 @@ function App() {
             </ProtectedRoute>
           }
         />
+        {user?.role === "user" && 
+          <>
+            <Route
+              path="/journal"
+              element={
+                <ProtectedRoute>
+                  <JournalMoodTracker user={user} showToast={showToast} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/assessment"
+              element={
+                <ProtectedRoute>
+                  <Assessment  />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/journal"
-          element={
-            <ProtectedRoute>
-              <JournalMoodTracker user={user} showToast={showToast} />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/insights"
+              element={<MoodInsights user={isAuthenticated ? user : null} />}
+            />
 
-        <Route
-          path="/insights"
-          element={<MoodInsights user={isAuthenticated ? user : null} />}
-        />
-
-        <Route
-          path="/chatbot"
-          element={
-            <ProtectedRoute>
-              <ChatbotPage user={user} />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/chatbot"
+              element={
+                <ProtectedRoute>
+                  <ChatbotPage user={user} />
+                </ProtectedRoute>
+              }
+            />
+          </>
+        }
 
         <Route
           path="/community"

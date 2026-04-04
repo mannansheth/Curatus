@@ -264,3 +264,22 @@ padding: 16px;
 
 
 }
+/* ── Therapist link (reused in LoginSignupPage too) ── */
+.therapist-link-section {
+  margin-top: 20px;
+  text-align: center;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.therapist-link-section p {
+  color: #ffffff;
+  font-size: 1.1rem;
+}
+
+.therapist-link {
+  color: #9c9dff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}

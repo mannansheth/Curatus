@@ -1,38 +1,39 @@
 .resources-page {
     min-height: 100vh;
-    background: var(--color-bg-primary);
-    padding: var(--spacing-xl) 0;
+    background: #0a0f2c;
+    padding: 40px 0;
 }
 
 .resources-page .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 var(--spacing-lg);
+    padding: 0 32px;
 }
 
 .resources-header {
     text-align: center;
-    margin-bottom: var(--spacing-2xl);
+    margin-bottom: 64px;
 }
 
 .resources-header h1 {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 16px;
+    color: #e5e7eb;
 }
 
 .resources-header p {
     font-size: 1.1rem;
-    color: var(--color-text-secondary);
+    color: #9ca3af;
 }
 
 .resource-category {
-    margin-bottom: var(--spacing-2xl);
+    margin-bottom: 64px;
 }
 
 .category-title {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
+    gap: 16px;
+    margin-bottom: 32px;
 }
 
 .category-icon {
@@ -41,34 +42,40 @@
 
 .category-title h2 {
     margin: 0;
+    color: #e5e7eb;
 }
 
 .articles-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-lg);
+    gap: 32px;
 }
 
 .article-card {
-    padding: var(--spacing-lg);
+    padding: 32px;
+    background: #111633;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
 }
 
 .article-card h3 {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 16px;
+    color: #e5e7eb;
 }
 
 .article-card p {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: 32px;
+    color: #9ca3af;
 }
 
 .read-more {
-    color: var(--color-primary-light);
+    color: #6366f1;
     font-weight: 600;
     transition: all 0.3s ease;
 }
 
 .read-more:hover {
-    color: var(--color-accent);
+    color: #8b5cf6;
     text-decoration: underline;
 }
 
@@ -77,47 +84,49 @@
    ============================================ */
 
 .wellness-tips {
-    margin-bottom: var(--spacing-2xl);
+    margin-bottom: 64px;
 }
 
 .wellness-tips h2 {
     text-align: center;
-    margin-bottom: var(--spacing-2xl);
+    margin-bottom: 64px;
+    color: #e5e7eb;
 }
 
 .tips-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--spacing-lg);
+    gap: 32px;
 }
 
 .tip-card {
-    padding: var(--spacing-lg);
+    padding: 32px;
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
     border: 1px solid rgba(99, 102, 241, 0.2);
-    border-radius: var(--radius-lg);
+    border-radius: 16px;
     transition: all 0.3s ease;
 }
 
 .tip-card:hover {
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
-    border-color: var(--color-primary);
+    border-color: #6366f1;
     transform: translateY(-4px);
 }
 
 .tip-card h3 {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 16px;
     font-size: 1.1rem;
+    color: #e5e7eb;
 }
 
 .tip-card p {
     margin-bottom: 0;
-    color: var(--color-text-secondary);
+    color: #9ca3af;
 }
 
 @media (max-width: 768px) {
     .resources-page {
-        padding: var(--spacing-lg) 0;
+        padding: 32px 0;
     }
 
     .articles-grid {

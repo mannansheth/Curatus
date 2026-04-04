@@ -36,30 +36,35 @@ export const authService = {
   signup: (email, password, name) =>
     api.post('/auth/signup', { email, password, name }),
   logout: () => api.post('/auth/logout'),
-  me : () => api.post("/auth/me")
+  me : () => api.post("/auth/me"),
+  registerTherapist: (payload) => api.post("/auth/therapist-signup", {...payload})
 };
 
 export const journalService = {
-  submitJournal: (content) =>
-    api.post('/journal/submit', { content }),
-  getJournals: () => api.get('/journal/list'),
-  deleteJournal: (id) => api.delete(`/journal/${id}`),
   addEntry : (id, content, timestamp) => api.post("journal/addEntry", {id, content, timestamp}),
-  getEntries: () => api.get("/journal/entries")
+  getEntries: () => api.get("/journal/entries"),
+
+  deleteJournal: (id) => api.delete(`/journal/${id}`),
 };
 
 export const appointmentService = {
   getAvailableSlots: (therapistId, date) =>
-    api.get(`/appointments/available`, { params: { therapistId, date } }),
-  bookAppointment: (therapistId, date, time) =>
-    api.post('/appointments/book', { therapistId, date, time }),
-  getAppointments: () => api.get('/appointments/list'),
+    api.get(`/appointments/slots`, { params: {therapistId, date} }),
+  bookAppointment: (data) =>
+    api.post('/appointments/book', { ...data }),
+  getUserAppointments: () => api.get('/appointments/user'),
+  getTherapistAppointments: () => api.get('/appointments/therapist'),
+
   cancelAppointment: (id) => api.delete(`/appointments/${id}`),
 };
 
 export const therapistService = {
-  getTherapists: (filters) =>
-    api.get('/therapists', { params: filters }),
+  getTherapists: (searchTerm, specialization, mode, maxFee) => api.get(`/therapist/all`, {
+    params: {
+      searchTerm, specialization, mode, maxFee
+    }
+  }),
+
   getTherapistDetails: (id) =>
     api.get(`/therapists/${id}`),
 };
@@ -67,11 +72,12 @@ export const therapistService = {
 export const communityService = {
   sendMessage: (message) => api.post("/community/message", {message}), 
   getMessages: () => api.get("/community/messages"),
+  addReaction: (postId, reaction) =>
+    api.post(`/community/posts/${postId}/react`, { reaction }),
+  
   getPosts: () => api.get('/community/posts'),
   createPost: (content, isAnonymous) =>
     api.post('/community/posts', { content, isAnonymous }),
-  addReaction: (postId, reaction) =>
-    api.post(`/community/posts/${postId}/react`, { reaction }),
   deletePost: (id) => api.delete(`/community/posts/${id}`),
 };  
 
@@ -82,10 +88,13 @@ export const moodService = {
 };
 
 export const userService = {
+  getUserStats: () => api.get('/user/stats'),
+  storeAssessment: (data) => api.post("/user/assessment", {data}), 
+
   getUserProfile: () => api.get('/user/profile'),
   updateUserProfile: (data) =>
     api.put('/user/profile', data),
-  getUserStats: () => api.get('/user/stats'),
+  
 };
 
 export default api;

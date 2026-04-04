@@ -1,0 +1,278 @@
+/* MoodInsights.css */
+
+/* ─── Page ───────────────────────────────────────────────────────────────────── */
+.mood-insights {
+  min-height: 100vh;
+  background: #0f1420;
+  padding: 48px 0 80px;
+}
+
+.mood-insights.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.mood-insights .container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────────── */
+.insights-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.insights-header h1 {
+  color: #f1f5f9;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.insights-header p {
+  color: #94a3b8;
+  font-size: 1rem;
+}
+
+/* ─── Line Graph Card ─────────────────────────────────────────────────────────── */
+.graph-card {
+  margin-bottom: 24px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
+.graph-card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.graph-card-header h2 {
+  color: #f1f5f9;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.graph-subtitle {
+  font-size: 0.8rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+/* ─── SVG graph wrapper ───────────────────────────────────────────────────────── */
+.line-graph-wrap {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.line-graph-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: crosshair;
+  /* smooth clip-path animation fallback */
+  overflow: visible;
+}
+
+/* ─── Empty state ─────────────────────────────────────────────────────────────── */
+.graph-empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+/* ─── Last 7 Grid ─────────────────────────────────────────────────────────────── */
+.mood-grid-card {
+  margin-bottom: 24px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
+.mood-grid-card h2 {
+  color: #f1f5f9;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+.mood-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  cursor: default;
+}
+
+.mood-cell:hover {
+  transform: scale(1.08);
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.mood-emoji {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+/* ─── Insights Grid ───────────────────────────────────────────────────────────── */
+.insights-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ─── Trends card ─────────────────────────────────────────────────────────────── */
+.trends-card {
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
+.trends-card h2 {
+  color: #f1f5f9;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.trends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.trend-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 6px 12px;
+  align-items: center;
+}
+
+.trend-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  grid-column: 1;
+}
+
+.trend-label {
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.trend-count {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.trend-percentage {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #818cf8;
+  grid-column: 2;
+  grid-row: 1;
+  text-align: right;
+}
+
+.trend-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 99px;
+  overflow: hidden;
+  grid-column: 1 / -1;
+}
+
+.trend-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5, #818cf8);
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+/* ─── Stats card ──────────────────────────────────────────────────────────────── */
+.stats-card {
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
+.stats-card h2 {
+  color: #f1f5f9;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  flex: 1;
+  font-size: 0.88rem;
+  color: #94a3b8;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  line-height: 1;
+}
+
+.stat-unit {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .insights-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .mood-insights {
+    padding: 24px 0 48px;
+  }
+
+  .mood-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .insights-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .graph-card-header {
+    flex-direction: column;
+    gap: 4px;
+  }
+}

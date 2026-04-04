@@ -5,18 +5,13 @@ from helpers import sentiment_analysis as s
 app = Flask(__name__)
 CORS(app)
 
-# --- Models ---
-# Primary: detects 7 emotions (anger, disgust, fear, joy, neutral, sadness, surprise)
-
-
-# --- Sentiment label → numeric score ---
 
 
 def analyze_text(text: str) -> dict:
     # 1. Get emotion + emoji
     emotion_label, emoji = s.get_emotion_emoji(text)
 
-    # 2. Get sentiment score (for the 1-10 numeric scale)
+
     sentiment_result = s.sentiment_pipeline(text, truncation=True, max_length=512)[0]
     raw_score = s.SENTIMENT_LABEL_MAP.get(sentiment_result["label"], 0)
     raw_score = s.apply_boosts(text, raw_score, emotion_label)

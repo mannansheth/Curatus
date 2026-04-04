@@ -1,5 +1,5 @@
 .card {
-    background: rgba(26, 31, 46, 0.7);
+    background: #184e77;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 16px;
     padding: 24px;
@@ -35,7 +35,7 @@
 }
 
 .card-description {
-    color: #cbd5e1;
+    color: #ffffff;
     font-size: 0.95rem;
     margin-bottom: 0;
 }

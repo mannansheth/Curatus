@@ -1,7 +1,7 @@
 .emergency-page {
     min-height: 100vh;
-    background: #0f1419;
-    padding: var(--spacing-xl) 0;
+    background: #0a0f2c;
+    padding: 40px 0;
 }
 
 .emergency-page .container {
@@ -41,6 +41,7 @@
 .emergency-contacts h2 {
     text-align: center;
     margin-bottom: 48px;
+    color: #e5e7eb;
 }
 
 .contacts-grid {
@@ -50,15 +51,17 @@
 }
 
 .contact-card {
-    padding: var(--spacing-xl);
+    padding: 40px;
     text-align: center;
     border: 2px solid #ef4444;
     background: rgba(239, 68, 68, 0.05);
+    border-radius: 16px;
 }
 
 .contact-card h3 {
     margin-bottom: 24px;
     font-size: 1.1rem;
+    color: #e5e7eb;
 }
 
 .contact-info {
@@ -80,7 +83,7 @@
 }
 
 .contact-availability {
-    color: #94a3b8;
+    color: #9ca3af;
     font-size: 0.9rem;
 }
 
@@ -95,6 +98,7 @@
 .emergency-resources h2 {
     text-align: center;
     margin-bottom: 48px;
+    color: #e5e7eb;
 }
 
 .resources-list {
@@ -108,15 +112,17 @@
     text-align: center;
     border: 1px solid rgba(239, 68, 68, 0.2);
     background: rgba(239, 68, 68, 0.05);
+    border-radius: 16px;
 }
 
 .resource-item h3 {
     margin-bottom: 16px;
+    color: #e5e7eb;
 }
 
 .resource-item p {
     margin-bottom: 0;
-    color: #cbd5e1;
+    color: #9ca3af;
 }
 
 /* ============================================
@@ -130,6 +136,7 @@
 .coping-strategies h2 {
     text-align: center;
     margin-bottom: 48px;
+    color: #e5e7eb;
 }
 
 .strategies-grid {
@@ -152,7 +159,7 @@
 
 .strategy p {
     margin-bottom: 0;
-    color: #cbd5e1;
+    color: #9ca3af;
     font-size: 0.95rem;
 }
 
@@ -166,6 +173,7 @@
     background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
     border: 2px solid rgba(236, 72, 153, 0.3);
     margin-bottom: 48px;
+    border-radius: 16px;
 }
 
 .important-message h2 {
@@ -175,7 +183,7 @@
 
 .important-message p {
     font-size: 1.05rem;
-    color: #cbd5e1;
+    color: #9ca3af;
     line-height: 1.8;
 }
 

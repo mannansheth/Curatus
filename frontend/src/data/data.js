@@ -1,0 +1,15 @@
+export const SPECIALIZATIONS =  [
+  'All',
+  'Anxiety & Stress',
+  'Depression',   
+  'Trauma & PTSD',
+  'Relationships & Family',
+  'Addiction & Substance Abuse',
+  'Grief & Loss',
+  'Child & Adolescent',
+  'Career & Life Coaching',
+  'Eating Disorders',
+  'OCD',
+  'Bipolar Disorder',
+  'Other',
+];

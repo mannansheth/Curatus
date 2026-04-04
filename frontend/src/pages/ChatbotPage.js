@@ -120,39 +120,7 @@ function ChatbotPage({ user }) {
         </div>
       </div>
 
-      {/* Sidebar */}
-      <div className="chat-sidebar">
-        <Card className="sidebar-card">
-          <CardContent>
-            <h3>📞 Quick Help</h3>
-            <div className="quick-links">
-              <a href="/appointment" className="quick-link">
-                Book Therapist
-              </a>
-              <a href="/resources" className="quick-link">
-                View Resources
-              </a>
-              <a href="/emergency" className="quick-link">
-                Emergency Support
-              </a>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="sidebar-card">
-          <CardContent>
-            <h3>📚 Topics</h3>
-            <div className="topics-list">
-              <button className="topic-btn">Anxiety</button>
-              <button className="topic-btn">Stress</button>
-              <button className="topic-btn">Sleep</button>
-              <button className="topic-btn">Depression</button>
-              <button className="topic-btn">Relationships</button>
-              <button className="topic-btn">Work</button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      
     </div>
   );
 }

@@ -1,0 +1,160 @@
+/* TherapistSignup.css
+   Extends LoginSignupPage.css — import both in TherapistSignup.jsx */
+
+/* ── Layout ── */
+.therapist-layout {
+  grid-template-columns: 1fr 1fr;
+  align-items: flex-start;
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+.therapist-card {
+  max-width: 600px;
+}
+
+/* ── Section labels ── */
+.form-section-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6366f1;
+  margin: 8px 0 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+/* ── Two-column row ── */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ── Select ── */
+.form-select {
+  padding: 16px;
+  background: #111633;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #e5e7eb;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  cursor: pointer;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #1e3a8a;
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.2);
+  background-color: #0a0f2c;
+}
+
+.form-select option {
+  background: #111633;
+  color: #e5e7eb;
+}
+
+/* ── Textarea ── */
+.form-textarea {
+  padding: 16px;
+  background: #111633;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #e5e7eb;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: all 0.3s ease;
+  line-height: 1.6;
+}
+
+.form-textarea::placeholder {
+  color: #6b7280;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #1e3a8a;
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.2);
+  background: #0a0f2c;
+}
+
+/* ── Time input ── */
+.form-time {
+  color-scheme: dark;
+}
+
+/* ── Char hint ── */
+.char-hint {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* ── Optional label ── */
+.optional-label {
+  font-weight: 400;
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-left: 4px;
+}
+
+/* ── Days grid ── */
+.days-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.day-chip {
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #111633;
+  color: #9ca3af;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.02em;
+}
+
+.day-chip:hover {
+  border-color: #6366f1;
+  color: #e5e7eb;
+}
+
+.day-chip--active {
+  background: rgba(99, 102, 241, 0.18);
+  border-color: #6366f1;
+  color: #a5b4fc;
+}
+
+
+.therapist-link:hover {
+  color: #8b5cf6;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .therapist-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .therapist-card {
+    max-width: 100%;
+  }
+}

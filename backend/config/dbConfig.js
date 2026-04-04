@@ -15,7 +15,8 @@ const db = mysql.createPool({
     waitForConnections: true,
   connectionLimit: 5,
   queueLimit: 0,
-  charset:'utf8mb4'
+  charset:'utf8mb4',
+  namedPlaceholders:true
 });
 
 db.on('connection', (conn) => {

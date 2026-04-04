@@ -33,8 +33,16 @@ function MoodBoard({ data }) {
 
   const grouped = useMemo(() => {
     const g = {};
+
     (data || []).forEach(item => {
-      const date = new Date(item.createdAt).toISOString().split("T")[0];
+      const dateObj = new Date(item.createdAt);
+
+      const date =
+        dateObj.getFullYear() +
+        "-" +
+        String(dateObj.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(dateObj.getDate()).padStart(2, "0");
       if (!g[date]) g[date] = [];
       g[date].push(item);
     });
@@ -48,10 +56,17 @@ function MoodBoard({ data }) {
     const out = [];
     for (let i = 0; i < startDay; i++) out.push(null);
     for (let d = 1; d <= totalDays; d++) {
-      const dateStr = new Date(year, month, d).toISOString().split("T")[0];
+      const dateObj = new Date(year, month, d);
+
+      const dateStr =
+        dateObj.getFullYear() +
+        "-" +
+        String(dateObj.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(dateObj.getDate()).padStart(2, "0");
       const entries = grouped[dateStr] || [];
       if (entries.length > 0) {
-        const avg = entries.reduce((s, e) => s + e.score, 0) / entries.length;
+        const avg = entries.reduce((s, e) => s + parseInt(e.score), 0) / entries.length;
         out.push({ avg, emoji: entries[entries.length - 1].emoji, date: dateStr, count: entries.length });
       } else {
         out.push({ avg: null, emoji: null, date: dateStr, count: 0 });

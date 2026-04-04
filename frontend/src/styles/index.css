@@ -166,7 +166,7 @@ button {
 /* ============================================
    CARDS - Glassmorphism Style
    ============================================ */
-
+/* 
 .card {
     background: rgba(26, 31, 46, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -175,7 +175,7 @@ button {
     backdrop-filter: blur(12px);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
-}
+} */
 
 .card:hover {
     transform: translateY(-4px);
@@ -196,7 +196,7 @@ button {
 }
 
 .card-description {
-    color: #cbd5e1;
+    color: #ffffff;
     font-size: 0.95rem;
 }
 
