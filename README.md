@@ -8,8 +8,8 @@ Follow these steps to run and contribute to the project locally.
 
 Do NOT fork. Clone the main repo directly:
 
-git clone {repo-url} 
-cd Curatus 
+- git clone https://github.com/mannansheth/Curatus
+- cd Curatus 
 
 Open the project folder in **VS Code**
 
