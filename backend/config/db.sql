@@ -91,7 +91,8 @@ CREATE TABLE `messages` (
   `content` text DEFAULT NULL,
   `ipAddress` varchar(100) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
-  `isAnonymous` tinyint(4) NOT NULL DEFAULT 1
+  `isAnonymous` tinyint(4) NOT NULL DEFAULT 1,
+  `usedName` VARCHAR(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -109,7 +110,8 @@ CREATE TABLE `reactions` (
   `userID` int(11) DEFAULT NULL,
   `messageID` int(11) NOT NULL,
   `ipAddress` varchar(20) DEFAULT NULL,
-  `reaction` text NOT NULL
+  `reaction` text NOT NULL,
+   `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
