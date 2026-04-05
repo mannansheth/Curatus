@@ -1,13 +1,17 @@
 # 🚀 Project Setup Guide
 
-Follow these steps to run the project locally.
+Follow these steps to run and contribute to the project locally.
 
 ---
 
-## 1. Clone or Download
+## 1. Clone Repository (You are a collaborator)
 
-- Fork the repository OR download ZIP  
-- Open the project folder in **VS Code**
+Do NOT fork. Clone the main repo directly:
+
+git clone <repo-url>  
+cd <project-folder>  
+
+Open the project folder in **VS Code**
 
 ---
 
@@ -56,6 +60,39 @@ pip install -r requirements.txt
 
 # run server  
 python app.py  
+
+---
+
+## 🔁 How to Contribute (IMPORTANT)
+
+1. Always pull latest code before starting:
+
+git pull origin main  
+
+2. Create a new branch:
+
+git checkout -b feature-name  
+
+3. Make your changes  
+
+4. Commit and push:
+
+git add .  
+git commit -m "your message"  
+git push origin feature-name  
+
+5. Go to GitHub → Click **Compare & Pull Request**
+
+6. Create PR → wait for review → merge  
+
+---
+
+## ⚠️ Rules
+
+- Do NOT push directly to `main`  
+- Always create a branch  
+- Always create a Pull Request  
+- Keep commits clean and meaningful  
 
 ---
 
