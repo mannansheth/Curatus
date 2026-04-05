@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardTitle } from '../components/Card';
 import './ResourcesPage.css';
+import SpotlightCard from '../components/SpotlightCard';
 
 function ResourcesPage() {
   const resources = [
@@ -56,7 +57,7 @@ function ResourcesPage() {
 
             <div className="articles-grid">
               {category.articles.map((article, idx) => (
-                <Card key={idx} className="article-card" interactive>
+                <SpotlightCard key={idx} className="article-card" interactive>
                   <CardContent>
                     <CardTitle>{article.title}</CardTitle>
                     <p>{article.description}</p>
@@ -64,7 +65,7 @@ function ResourcesPage() {
                       Read More →
                     </a>
                   </CardContent>
-                </Card>
+                </SpotlightCard>
               ))}
             </div>
           </section>

@@ -51,7 +51,8 @@ function CommunitySupport({ isAuthenticated, user, showToast }) {
       createdAt: new Date(),
       isOwn: true,
       reactions: Object.fromEntries(REACTIONS.map((r) => [r, 0])),
-      isAnonymous: isAnonymous
+      isAnonymous: isAnonymous,
+      usedName: user?.name === name ? "" : name
     };
 
     

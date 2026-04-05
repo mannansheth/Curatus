@@ -1,14 +1,8 @@
-/* ============================================
-   COMMUNITY SUPPORT — REDESIGNED
-   Aesthetic: Soft dark, warm glows, editorial calm
-   Font: DM Sans (body) + DM Mono (meta/timestamps)
-   ============================================ */
+
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
-/* ============================================
-   ROOT TOKENS
-   ============================================ */
+
 :root {
   --bg-base:       #0d1117;
   --bg-surface:    #13181f;
@@ -34,9 +28,7 @@
   font-family: 'DM Sans', sans-serif;
 }
 
-/* ============================================
-   PAGE SHELL
-   ============================================ */
+
 .chat-page {
   min-height: 100vh;
   background: var(--bg-base);
@@ -45,9 +37,9 @@
   align-items: stretch;
   /* subtle grid texture */
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99,102,241,0.12) 0%, transparent 70%),
-    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(225, 225, 255, 0.12) 0%, transparent 70%),
+    linear-gradient(rgba(255, 255, 255, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.10) 1px, transparent 1px);
   background-size: 100% 100%, 40px 40px, 40px 40px;
 }
 

@@ -62,7 +62,6 @@ function JournalMoodTracker({ user, showToast }) {
 
       const updatedEntry = res.data.entry;
 
-      // 🔥 Replace temp entry with actual data
       setEntries((prev) =>
         prev.map((entry) =>
           entry.ID === tempId

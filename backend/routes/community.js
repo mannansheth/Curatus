@@ -54,8 +54,8 @@ router.post("/message", async (req, res) => {
       }
 
       await db.query(
-        "INSERT INTO messages (content, userID, ipAddress, createdAt) VALUES (?, NULL, ?, ?)",
-        [message.content, ip, now]
+        "INSERT INTO messages (content, userID, ipAddress, createdAt, isAnonymous, usedName) VALUES (?, NULL, ?, ?, ?, ?)",
+        [message.content, ip, now, message.isAnonymous, !message.isAnonymous ? message.usedName : null]
       );
 
     } 
@@ -77,8 +77,8 @@ router.post("/message", async (req, res) => {
       }
 
       await db.query(
-        "INSERT INTO messages (content, userID, ipAddress, createdAt, isAnonymous) VALUES (?, ?, NULL, ?, ?)",
-        [message.content, userID, now, message.isAnonymous]
+        "INSERT INTO messages (content, userID, ipAddress, createdAt, isAnonymous, usedName) VALUES (?, ?, NULL, ?, ?, ?)",
+        [message.content, userID, now, message.isAnonymous, !message.isAnonymous ? message.usedName === "" ? null : message.usedName : null]
       );
     }
 
@@ -91,7 +91,29 @@ router.post("/message", async (req, res) => {
   }
 });
 const getMessages = async  (userID, ip) => {
-  const [messages] = await db.query(`SELECT m.ID, m.content, m.createdAt, u.Name, m.ipAddress, m.userID , m.isAnonymous, GROUP_CONCAT(r.reaction) AS reactions
+  const [messages] = await db.query(`
+    SELECT 
+    m.ID, 
+    m.content, 
+    m.createdAt,
+    CASE WHEN m.isAnonymous = 1 THEN
+      "Anonymous"
+    ELSE 
+      CASE WHEN m.userID IS NULL THEN 
+        m.usedName
+      ELSE 
+        CASE WHEN m.usedName IS NULL THEN
+          u.Name
+        ELSE 
+          m.usedName
+        END
+      END
+    END AS Name,
+
+    m.ipAddress, 
+    m.userID , 
+    m.isAnonymous, 
+    GROUP_CONCAT(r.reaction) AS reactions
     FROM messages m  
     LEFT JOIN users u ON u.ID = m.userID
     LEFT JOIN reactions r ON r.messageID = m.ID
@@ -142,7 +164,7 @@ router.post('/posts/:postID/react', async (req, res) => {
   const {reaction} = req.body;
   const postID = req.params.postID;
   let userID = null;
-  console.log(postID, reaction);
+
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
   if (token) {
@@ -154,7 +176,7 @@ router.post('/posts/:postID/react', async (req, res) => {
     }
   }
   const ip = req.ip;
-  console.log(ip);
+
   const [response] = await db.query(
     `SELECT COUNT(*) AS count 
     FROM reactions 
@@ -166,14 +188,27 @@ router.post('/posts/:postID/react', async (req, res) => {
     )`,
     [postID, userID, ip]
   );
-  if (response[0].count > 0) {
-    await db.query(`UPDATE reactions SET reaction = ? 
-    WHERE messageID = ? 
-    AND (
-      (userID IS NOT NULL AND userID = ?) 
-      OR 
-      (userID IS NULL AND ipAddress = ?)
-    )`, [reaction, postID, userID, ip]);
+  if (response[0].count > 1) {
+    await db.query(`
+    UPDATE reactions SET reaction = ?, createdAt = NOW() 
+    WHERE  
+    id = (
+      SELECT id FROM (
+        SELECT id 
+        FROM reactions
+        WHERE 
+        messageID = ? AND 
+        (
+        (userID IS NOT NULL AND userID = ?)
+        OR
+        (userID IS NULL AND ipAddress = ?)
+        )
+        ORDER BY createdAt ASC LIMIT 1
+      ) AS t
+      
+    )
+      `, 
+      [reaction, postID, userID, ip]);
   } else {
     await db.query("INSERT INTO reactions (userID, messageID, ipAddress, reaction) VALUES (?, ?, ?, ?)", [userID, postID, userID ? null : ip, reaction]);
   }

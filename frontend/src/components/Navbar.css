@@ -2,7 +2,7 @@
     background: linear-gradient(135deg, rgba(26, 31, 46, 0.95), rgba(36, 45, 61, 0.95));
     backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    position: sticky;
+    position:sticky;
     top: 0;
     z-index: 1000;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);

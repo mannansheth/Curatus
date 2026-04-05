@@ -5,6 +5,7 @@ import { Card, CardContent } from '../components/Card';
 import MoodBoard from '../components/MoodBoard';
 import {userService} from '../services/api';
 import './Dashboard.css';
+import SpotlightCard from '../components/SpotlightCard';
 
 function Dashboard({ user }) {
   const [data, setData] = useState([]);
@@ -217,19 +218,6 @@ function Dashboard({ user }) {
               </CardContent>
             </Card>
 
-            <Card className="sidebar-card">
-              <CardContent>
-                <h3>📚 Topics</h3>
-                <div className="topics-list">
-                  <button className="topic-btn">Anxiety</button>
-                  <button className="topic-btn">Stress</button>
-                  <button className="topic-btn">Sleep</button>
-                  <button className="topic-btn">Depression</button>
-                  <button className="topic-btn">Relationships</button>
-                  <button className="topic-btn">Work</button>
-                </div>
-              </CardContent>
-            </Card>
           </aside>
     </div>
   );
