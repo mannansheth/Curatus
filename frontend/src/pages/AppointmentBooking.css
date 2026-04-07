@@ -670,7 +670,7 @@
 .status-badge {
   padding: 4px 14px;
   border-radius: 20px;
-  font-size: 0.78rem;
+  font-size: 1rem;
   font-weight: 700;
   text-transform: capitalize;
 }

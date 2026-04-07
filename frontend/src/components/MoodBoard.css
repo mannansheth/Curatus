@@ -6,7 +6,7 @@
   flex-direction: column;
   gap: 12px;
   padding: 20px 24px;
-  background: #161b22;
+  background: linear-gradient(135deg, rgb(0, 0, 48), rgb(15, 5, 39));
   border: 1px solid #30363d;
   border-radius: 8px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -14,7 +14,8 @@
   align-items: center;
   /* Center the whole card horizontally */
   display: flex;
-  margin: 0 auto 40px auto;
+  margin: 0 auto 0 auto;
+  padding-bottom: 20px;
   width: 100%;
   max-width: calc(100%);
   box-sizing: border-box;
@@ -27,6 +28,22 @@
   justify-content: center;
   gap: 14px;
   width: 100%;
+  position:relative;
+}
+.arrow {
+  position:absolute;
+  color:rgb(255, 255, 255);
+  background-color: transparent;
+}
+.back-arrow {
+  left:30px;
+  top:0;
+  
+  ;
+}
+.front-arrow {
+  right:30px;
+  top:0;
 }
 
 .mb-title {

@@ -480,12 +480,6 @@ function TherapistSignup({ showToast, setIsAuthenticated, setUser }) {
               </p>
             </div>
 
-            <p className="terms-text">
-              By registering, you agree to our{' '}
-              <a href="#terms">Terms of Service</a> and{' '}
-              <a href="#privacy">Privacy Policy</a>
-            </p>
-
             <div className="therapist-link-section">
               <p>
                 Looking for support?{' '}
@@ -494,6 +488,12 @@ function TherapistSignup({ showToast, setIsAuthenticated, setUser }) {
                 </Link>
               </p>
             </div>
+            <p className="terms-text">
+              By registering, you agree to our{' '}
+              <a href="#terms">Terms of Service</a> and{' '}
+              <a href="#privacy">Privacy Policy</a>
+            </p>
+
           </CardContent>
         </Card>
 

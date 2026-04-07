@@ -2,7 +2,12 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/dbConfig");
 
-
+const updateStatus = async () => {
+  await db.query(`UPDATE appointments SET status = 'completed' 
+    WHERE status = 'upcoming' 
+    AND NOW() > TIMESTAMP(date, time);
+    `)
+}
 router.post("/book", async (req, res) => {
   const userId = req.userId;
   const {therapistId, date, time} = req.body;
@@ -15,7 +20,7 @@ router.post("/book", async (req, res) => {
 
 router.get("/user", async (req, res) => {
   const userId = req.userId;
-
+  await updateStatus();
   const [response] = await db.query(`SELECT a.ID, u.Name AS therapistName, a.date, a.time, a.status, a.postRemarks, t.mode, t.city 
     FROM appointments a 
     JOIN users u ON u.ID = a.therapistID
@@ -26,8 +31,8 @@ router.get("/user", async (req, res) => {
 })
 router.get("/therapist", async (req, res) => {
   const userId = req.userId;
-
-  const [response] = await db.query(`SELECT a.ID, u.Name AS patientName, a.date, a.time, a.status, a.postRemarks, t.mode, t.city 
+  await updateStatus();
+  const [response] = await db.query(`SELECT a.ID, u.Name AS patientName, a.date, a.time, a.status, a.preRemarks, t.mode, t.city, a.postRemarks 
     FROM appointments a 
     JOIN users u ON u.ID = a.userID
     JOIN therapists t ON t.userID = a.therapistID
@@ -78,6 +83,13 @@ router.get("/slots", async (req, res) => {
 
   return res.json({slots});
   
+})
+router.put('/remark', async (req, res) => {
+  const {id, remarks} = req.body;
+  console.log(id, remarks)
+  await db.query("UPDATE appointments SET postRemarks = ? WHERE ID = ?", [remarks, id]);
+
+  return res.json({success:true})
 })
 
 module.exports = router;

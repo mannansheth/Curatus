@@ -6,6 +6,7 @@ import { therapistService, appointmentService } from '../services/api';
 import './AppointmentBooking.css';
 
 import { SPECIALIZATIONS } from '../data/data';
+import AppointmentCard from '../components/AppointmentCard';
 
 
 const MODES = ['All', 'Online', 'In-person', 'Both'];
@@ -288,6 +289,23 @@ function AppointmentBooking({ user, showToast }) {
   return (
     <div className="appointment-page">
       <div className="container">
+        <section className="booked-appointments">
+          <h2>Your Appointments</h2>
+          {loadingMine ? (
+            <div className="slots-loading"><span className="spinner-sm" /> Loading…</div>
+          ) : myAppointments.length > 0 ? (
+            <div className="appointments-list">
+              {myAppointments.map((apt, i) => (
+                <AppointmentCard key={apt.ID} role={user.role} apt={apt} />
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state">
+              <span className="empty-icon">📋</span>
+              <p>No appointments yet. {user.role === "user" && "Pick a therapist above to get started!"}</p>
+            </div>
+          )}
+        </section>
         {user.role === "user" && 
           <>
             <section className="appointment-header">
@@ -516,43 +534,7 @@ function AppointmentBooking({ user, showToast }) {
           </>
         }
 
-        <section className="booked-appointments">
-          <h2>Your Appointments</h2>
-          {loadingMine ? (
-            <div className="slots-loading"><span className="spinner-sm" /> Loading…</div>
-          ) : myAppointments.length > 0 ? (
-            <div className="appointments-list">
-              {myAppointments.map((apt, i) => (
-                <div key={apt.ID} className="appointment-item">
-                  <div className="apt-left">
-                    {user.role === "user" && 
-                      <TherapistAvatar name={apt.therapistName} />
-                    }
-                    <div className="apt-info">
-                      <h3>{user.role == "user" ? apt.therapistName : apt.patientName}</h3>
-                      <p>📅 {formatDateDisplay(apt.date)} &nbsp;·&nbsp; ⏰ {formatTime12(apt.time)}</p>
-                      <p>⏱️ 60 minutes &nbsp;·&nbsp; <span style={{ textTransform: 'capitalize' }}>{apt.mode || ''}</span></p>
-                    </div>
-                  </div>
-                  <div className="apt-badge-status">
-                    <span className={`status-badge status-${apt.status || 'upcoming'}`}>
-                      {apt.status || 'Upcoming'}
-                    </span>
-                  </div>
-                  <div className="apt-actions">
-                    <Button variant="secondary" size="sm">Reschedule</Button>
-                    <Button variant="danger" size="sm">Cancel</Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="empty-state">
-              <span className="empty-icon">📋</span>
-              <p>No appointments yet. {user.role === "user" && "Pick a therapist above to get started!"}</p>
-            </div>
-          )}
-        </section>
+        
       </div>
 
       {/* ── Confirmation Modal ── */}

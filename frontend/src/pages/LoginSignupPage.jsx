@@ -124,7 +124,7 @@ function LoginSignupPage({setUser, showToast, setIsAuthenticated}) {
 
   return (
     <div className="login-page">
-      <div className="login-container">
+      <div className="login-container" style={{flexDirection:isLogin ?'row':'row-reverse'}}>
         <Card className="login-card">
           <CardContent>
             <div className="auth-header">
@@ -219,7 +219,7 @@ function LoginSignupPage({setUser, showToast, setIsAuthenticated}) {
                 {isLogin ? 'Sign In' : 'Create Account'}
               </Button>
             </form>
-
+            
             <div className="auth-divider">
               <span>or</span>
             </div>
@@ -250,13 +250,6 @@ function LoginSignupPage({setUser, showToast, setIsAuthenticated}) {
                 </p>
               )}
             </div>
-
-            <p className="terms-text">
-              By signing up, you agree to our{' '}
-              <a href="#terms">Terms of Service</a> and{' '}
-              <a href="#privacy">Privacy Policy</a>
-            </p>
-
             <div className="therapist-link-section">
               <p>
                 Are you a therapist?{' '}
@@ -265,6 +258,14 @@ function LoginSignupPage({setUser, showToast, setIsAuthenticated}) {
                 </Link>
               </p>
             </div>
+
+            <p className="terms-text">
+              By signing up, you agree to our{' '}
+              <a href="#terms">Terms of Service</a> and{' '}
+              <a href="#privacy">Privacy Policy</a>
+            </p>
+
+            
           </CardContent>
         </Card>
 

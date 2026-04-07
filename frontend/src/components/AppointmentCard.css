@@ -1,0 +1,392 @@
+/* AppointmentCard.css
+   Matches MindCare: bg #0f1420 · surface #111827 · inner #0d1117 · accent #4f46e5
+*/
+
+/* ─── Card ───────────────────────────────────────────────────────────────────── */
+.apt-card {
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+.apt-card:hover {
+  border-color: rgba(79, 70, 229, 0.25);
+}
+
+/* Status-specific left border accent */
+.apt-card--upcoming::before,
+.apt-card--completed::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 16px;
+  bottom: 16px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+}
+
+.apt-card--upcoming::before  { background: #4f46e5; }
+.apt-card--completed::before { background: #059669; }
+
+/* ─── Left ───────────────────────────────────────────────────────────────────── */
+.apt-card-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Avatar */
+.apt-card-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+/* Info */
+.apt-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.apt-card-name {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.apt-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.83rem;
+  color: #94a3b8;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.meta-dot {
+  color: #374151;
+  font-size: 0.7rem;
+}
+
+/* ─── Right ──────────────────────────────────────────────────────────────────── */
+.apt-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* ─── Status badge ───────────────────────────────────────────────────────────── */
+.apt-status-badge {
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.apt-status--upcoming  { background: rgba(79, 70, 229, 0.15);  color: #818cf8; }
+.apt-status--completed { background: rgba(5, 150, 105, 0.15);  color: #34d399; }
+.apt-status--cancelled { background: rgba(239, 68, 68, 0.12);  color: #f87171; }
+
+/* ─── Action buttons ─────────────────────────────────────────────────────────── */
+.apt-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Base button style */
+.apt-btn {
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  background: none;
+}
+
+/* Secondary — Reschedule */
+.apt-btn--secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+.apt-btn--secondary:hover {
+  border-color: #4f46e5;
+  color: #f1f5f9;
+  background: rgba(79, 70, 229, 0.1);
+}
+
+/* Danger — Cancel */
+.apt-btn--danger {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.apt-btn--danger:hover {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+/* Note — Pre-remarks toggle */
+.apt-btn--note {
+  background: rgba(251, 191, 36, 0.08);
+  border-color: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+}
+
+.apt-btn--note:hover,
+.apt-btn--note-active {
+  background: rgba(251, 191, 36, 0.16);
+  border-color: rgba(251, 191, 36, 0.45);
+}
+
+/* Remarks — Add/Edit session remarks */
+.apt-btn--remarks {
+  background: rgba(5, 150, 105, 0.08);
+  border-color: rgba(5, 150, 105, 0.25);
+  color: #34d399;
+}
+
+.apt-btn--remarks:hover {
+  background: rgba(5, 150, 105, 0.18);
+  border-color: rgba(5, 150, 105, 0.45);
+}
+
+.apt-btn--remarks-done {
+  background: rgba(5, 150, 105, 0.12);
+  border-color: rgba(5, 150, 105, 0.35);
+}
+
+/* ─── Pre-remarks popover ────────────────────────────────────────────────────── */
+.preremarks-wrap {
+  position: relative;
+}
+
+.preremarks-popover {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  width: 280px;
+  background: #1e2433;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  z-index: 50;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  animation: popoverIn 0.18s cubic-bezier(.4,0,.2,1) both;
+}
+
+@keyframes popoverIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Arrow pointer */
+.preremarks-popover::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  right: 20px;
+  width: 10px;
+  height: 10px;
+  background: #1e2433;
+  border-right: 1px solid rgba(99, 102, 241, 0.3);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+  transform: rotate(45deg);
+}
+
+.preremarks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.preremarks-header span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6366f1;
+}
+
+.popover-close {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.15s;
+  line-height: 1;
+}
+
+.popover-close:hover { color: #f1f5f9; }
+
+.preremarks-body {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  line-height: 1.65;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.preremarks-empty {
+  color: #4b5563;
+  font-style: italic;
+}
+
+/* ─── Remarks Modal internals ────────────────────────────────────────────────── */
+.remarks-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.remarks-apt-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.remarks-patient-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin: 0 0 3px;
+}
+
+.remarks-apt-meta {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.remarks-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remarks-char {
+  font-size: 0.75rem;
+  color: #4b5563;
+  font-weight: 400;
+}
+
+.remarks-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  color: #f1f5f9;
+  font-size: 0.9rem;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.remarks-textarea::placeholder { color: #374151; }
+
+.remarks-textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  background: #080c14;
+}
+
+.remarks-error {
+  font-size: 0.83rem;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 0;
+}
+
+.remarks-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.remarks-actions button { min-width: 100px; }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .apt-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px 16px;
+  }
+
+  .apt-card-right {
+    align-items: flex-start;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .apt-card-actions {
+    justify-content: flex-start;
+  }
+
+  .preremarks-popover {
+    right: auto;
+    left: 0;
+  }
+
+  .preremarks-popover::after {
+    right: auto;
+    left: 20px;
+  }
+}

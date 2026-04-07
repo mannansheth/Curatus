@@ -8,8 +8,8 @@ padding: 32px;
 }
 
 .login-container {
-display: grid;
-grid-template-columns: 1fr 1fr;
+display: flex;
+justify-content: space-between;
 gap: 64px;
 max-width: 1200px;
 width: 100%;
@@ -151,14 +151,14 @@ margin-bottom: 32px;
 }
 
 .auth-footer p {
-color: #9ca3af;
+color: #dddddd;
 font-size: 0.95rem;
 }
 
 .toggle-auth {
 background: none;
 border: none;
-color: #6366f1;
+color: #9193ff;
 font-weight: 600;
 cursor: pointer;
 transition: color 0.3s ease;

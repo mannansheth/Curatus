@@ -47,7 +47,7 @@ KEYWORD_EMOJI_MAP = [
     (["injured", "hurt", "pain", "ache", "sore"], "🤕"),
     (["sleepy", "drowsy", "yawning"], "🥱"),
     (["tired", "exhausted", "drained", "fatigued"], "😴"),
-    (["sleep", "nap", "bed", "insomnia", "can't sleep"], "😴"),
+    (["sleep", "nap", "bed", "insomnia", "can't sleep", "slept"], "😴"),
     (["hungry", "starving", "famished"], "😋"),
     (["thirsty", "dehydrated"], "😮‍💨"),
     (["full", "stuffed", "overate"], "🤤"),

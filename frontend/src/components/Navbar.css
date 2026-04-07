@@ -1,11 +1,11 @@
 .navbar {
-    background: linear-gradient(135deg, rgba(26, 31, 46, 0.95), rgba(36, 45, 61, 0.95));
+    background: linear-gradient(135deg, rgba(26, 31, 46, 0.089), rgba(36, 45, 61, 0));
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0);
     position:sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.875);
 }
 
 .navbar-container {

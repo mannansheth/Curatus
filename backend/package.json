@@ -4,12 +4,13 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"npx nodemon server.js"
+    "start": "npx nodemon server.js"
   },
   "author": "Mannan",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "axios": "^1.14.0",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",

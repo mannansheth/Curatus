@@ -1,5 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import "./MoodBoard.css";
+import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaArrowCircleRight } from "react-icons/fa";
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTH_NAMES = [
@@ -29,7 +30,7 @@ function scoreToColor(score) {
 function MoodBoard({ data }) {
   const today = new Date();
   const year = today.getFullYear();
-  const month = today.getMonth();
+  const [month, setMonth] = useState(today.getMonth())
 
   const grouped = useMemo(() => {
     const g = {};
@@ -85,6 +86,8 @@ function MoodBoard({ data }) {
     <div className="mb-root">
 
       <div className="mb-header">
+        <FaArrowAltCircleLeft onClick={() => setMonth(month - 1)} className="arrow back-arrow" size={27}/>
+        <FaArrowAltCircleRight onClick={() => setMonth(month + 1)} className="arrow front-arrow" size={27}/>
         <span className="mb-title">{MONTH_NAMES[month]} {year}</span>
         <div className="mb-stats">
           <span className="mb-stat"><strong>{totalEntries}</strong> entries</span>

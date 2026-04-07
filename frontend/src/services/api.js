@@ -54,6 +54,7 @@ export const appointmentService = {
     api.post('/appointments/book', { ...data }),
   getUserAppointments: () => api.get('/appointments/user'),
   getTherapistAppointments: () => api.get('/appointments/therapist'),
+  saveRemarks: ({id, remarks}) => api.put("/appointments/remark", {id, remarks}), 
 
   cancelAppointment: (id) => api.delete(`/appointments/${id}`),
 };
@@ -96,5 +97,8 @@ export const userService = {
     api.put('/user/profile', data),
   
 };
+export const chatbotService = {
+  sendMessage: (message) => api.post("/chatbot/message", {message})
+}
 
 export default api;

@@ -192,7 +192,7 @@ router.post('/posts/:postID/react', async (req, res) => {
     await db.query(`
     UPDATE reactions SET reaction = ?, createdAt = NOW() 
     WHERE  
-    id = (
+    id = ( 
       SELECT id FROM (
         SELECT id 
         FROM reactions

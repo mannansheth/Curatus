@@ -28,7 +28,7 @@ router.post("/addEntry", async (req, res) => {
 router.get("/entries", async (req, res) => {
   const userId = req.userId;
 
-  const [entries] = await db.query("SELECT * FROM journal_entries WHERE userID = ? ORDER BY createdAt DESC", [userId]);
+  const [entries] = await db.query("SELECT * FROM journal_entries WHERE userID = ? AND createdAt > NOW() - INTERVAL 3 DAY ORDER BY createdAt DESC", [userId]);
 
   res.status(200).json({
     entries

@@ -205,16 +205,18 @@ font-size: 1.5rem;
 }
 
 .entry-timestamp {
-color: #6b7280;
+color: #c1c1c1;
 font-size: 0.85rem;
 margin-left: auto;
 }
 
 .entry-text {
-color: #9ca3af;
+color: #e0e0e0;
 line-height: 1.6;
 margin-bottom: 16px;
 max-height: 150px;
+font-size:1.1rem;
+font-weight:600;
 overflow-y: auto;
 }
 
@@ -234,7 +236,7 @@ gap: 8px;
 }
 
 .score-label {
-color: #6b7280;
+color: #bbbbbb;
 font-size: 0.8rem;
 }
 
@@ -252,8 +254,8 @@ transition: width 0.3s ease;
 }
 
 .score-value {
-color: #6b7280;
-font-size: 0.8rem;
+color: #bcbcbc;
+font-size: 0.9rem;
 }
 
 .delete-btn {

@@ -1,14 +1,14 @@
 import {useState, useEffect, useRef} from 'react';
 import './SpotlightCard.css'
 
-function SpotlightCard({ children, className = '', delay = 0 }) {
+function SpotlightCard({ children, className = '', delay = 0, angle=10 }) {
   const cardRef = useRef(null);
   const [style, setStyle] = useState({});
   const [spotStyle, setSpotStyle] = useState({});
   const [visible, setVisible] = useState(false);
 
   // Scroll reveal
-  useEffect(() => {
+useEffect(() => {
     const el = cardRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
@@ -27,8 +27,8 @@ function SpotlightCard({ children, className = '', delay = 0 }) {
     const y = e.clientY - rect.top;
     const cx = rect.width / 2;
     const cy = rect.height / 2;
-    const rotX = ((y - cy) / cy) * -10;
-    const rotY = ((x - cx) / cx) *10;
+    const rotX = ((y - cy) / cy) * -angle;
+    const rotY = ((x - cx) / cx) *angle;
 
     setStyle({
       transform: `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.02,1.02,1.02)`,

@@ -86,11 +86,8 @@ function App() {
         user={user}
         onLogout={handleLogout}
       />
-
-
       <Routes>
         <Route path="/" element={<LandingPage />} />
-
         <Route
           path="/login"
           element={
@@ -119,7 +116,7 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard user={user} />
+              <Dashboard user={user} showToast={showToast} />
             </ProtectedRoute>
           }
         />
@@ -151,7 +148,7 @@ function App() {
               path="/chatbot"
               element={
                 <ProtectedRoute>
-                  <ChatbotPage user={user} />
+                  <ChatbotPage user={user} showToast={showToast}/>
                 </ProtectedRoute>
               }
             />
