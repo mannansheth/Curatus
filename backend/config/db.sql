@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 04, 2026 at 09:11 PM
+-- Generation Time: Apr 07, 2026 at 07:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,8 +20,9 @@ SET time_zone = "+00:00";
 --
 -- Database: `curatus`
 --
-CREATE DATABASE `curatus`;
+CREATE DATABASE IF NOT EXISTS `curatus` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `curatus`;
+
 -- --------------------------------------------------------
 
 --
@@ -39,11 +40,6 @@ CREATE TABLE `appointments` (
   `status` enum('upcoming','completed','cancelled','') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `appointments`
---
-
-
 -- --------------------------------------------------------
 
 --
@@ -56,9 +52,20 @@ CREATE TABLE `assessment` (
   `data` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `assessment`
+-- Table structure for table `chatbotmessages`
 --
+
+CREATE TABLE `chatbotmessages` (
+  `ID` int(11) NOT NULL,
+  `userID` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `sender` varchar(10) NOT NULL,
+  `riskLevel` varchar(20) NOT NULL,
+  `sentAt` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -76,9 +83,6 @@ CREATE TABLE `journal_entries` (
   `emoji` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `journal_entries`
---
 -- --------------------------------------------------------
 
 --
@@ -92,12 +96,8 @@ CREATE TABLE `messages` (
   `ipAddress` varchar(100) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   `isAnonymous` tinyint(4) NOT NULL DEFAULT 1,
-  `usedName` VARCHAR(100) DEFAULT NULL
+  `usedName` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `messages`
---
 
 -- --------------------------------------------------------
 
@@ -111,9 +111,8 @@ CREATE TABLE `reactions` (
   `messageID` int(11) NOT NULL,
   `ipAddress` varchar(20) DEFAULT NULL,
   `reaction` text NOT NULL,
-   `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 -- --------------------------------------------------------
 
@@ -140,6 +139,18 @@ CREATE TABLE `therapists` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usercontext`
+--
+
+CREATE TABLE `usercontext` (
+  `ID` int(11) NOT NULL,
+  `userID` int(11) NOT NULL,
+  `summary` text NOT NULL,
+  `createdAt` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -151,9 +162,9 @@ CREATE TABLE `users` (
   `ID` int(11) NOT NULL,
   `Email` varchar(255) NOT NULL,
   `Name` varchar(255) NOT NULL,
-  `Password` text NOT NULL
+  `Password` text NOT NULL,
+  `createdDate` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 --
 -- Indexes for dumped tables
@@ -171,6 +182,13 @@ ALTER TABLE `appointments`
 -- Indexes for table `assessment`
 --
 ALTER TABLE `assessment`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `userID` (`userID`);
+
+--
+-- Indexes for table `chatbotmessages`
+--
+ALTER TABLE `chatbotmessages`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `userID` (`userID`);
 
@@ -204,6 +222,13 @@ ALTER TABLE `therapists`
   ADD KEY `fk_therapist_user` (`userID`);
 
 --
+-- Indexes for table `usercontext`
+--
+ALTER TABLE `usercontext`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `userID` (`userID`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -217,43 +242,55 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `assessment`
 --
 ALTER TABLE `assessment`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `chatbotmessages`
+--
+ALTER TABLE `chatbotmessages`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `journal_entries`
 --
 ALTER TABLE `journal_entries`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `reactions`
 --
 ALTER TABLE `reactions`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `therapists`
 --
 ALTER TABLE `therapists`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `usercontext`
+--
+ALTER TABLE `usercontext`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -271,6 +308,12 @@ ALTER TABLE `appointments`
 --
 ALTER TABLE `assessment`
   ADD CONSTRAINT `assessment_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`ID`);
+
+--
+-- Constraints for table `chatbotmessages`
+--
+ALTER TABLE `chatbotmessages`
+  ADD CONSTRAINT `chatbotmessages_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`ID`);
 
 --
 -- Constraints for table `journal_entries`
@@ -296,6 +339,12 @@ ALTER TABLE `reactions`
 --
 ALTER TABLE `therapists`
   ADD CONSTRAINT `fk_therapist_user` FOREIGN KEY (`userID`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `usercontext`
+--
+ALTER TABLE `usercontext`
+  ADD CONSTRAINT `usercontext_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`ID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

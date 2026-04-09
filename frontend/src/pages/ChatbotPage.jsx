@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from '../components/Button';
 import { Card, CardContent } from '../components/Card';
 import './ChatbotPage.css';
@@ -11,13 +11,31 @@ function ChatbotPage({ showToast }) {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const chatRef = useRef(null);
   const suggestedPrompts = [
     'I\'m feeling anxious about work',
     'How can I improve my sleep?',
     'I need stress management tips',
     'Tell me about meditation',
   ];
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+
+      try {
+        const response = await chatbotService.getMessages();
+        setMessages([...messages, ...response.data?.messages]);
+      } catch (err) {
+        showToast("Unable to load messages.", "error");
+      }
+
+    }
+    fetchMessages();
+  }, [])
+
+   useEffect(() => {
+      chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: 'smooth' });
+    }, [messages]);
 
   const handleSend = async (text = input) => {
     if (!text.trim()) return;
@@ -55,7 +73,7 @@ function ChatbotPage({ showToast }) {
 
 
         <SpotlightCard className="chat-card" angle={1}>
-          <div className="messages-area">
+          <div className="messages-area" ref={chatRef}>
             {messages.map((msg, _i) => (
               <div key={_i} className={`message message-${msg.sender}`}>
                 <div className="message-content">

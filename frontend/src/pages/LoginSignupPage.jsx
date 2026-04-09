@@ -5,6 +5,7 @@ import { Card, CardContent, CardTitle } from '../components/Card';
 import './LoginSignupPage.css';
 import api, { authService } from '../services/api';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
+import SpotlightCard from '../components/SpotlightCard';
 
 function LoginSignupPage({setUser, showToast, setIsAuthenticated}) {
   const [isLogin, setIsLogin] = useState(true);
@@ -125,7 +126,7 @@ function LoginSignupPage({setUser, showToast, setIsAuthenticated}) {
   return (
     <div className="login-page">
       <div className="login-container" style={{flexDirection:isLogin ?'row':'row-reverse'}}>
-        <Card className="login-card">
+        <SpotlightCard className="login-card" angle={3}>
           <CardContent>
             <div className="auth-header">
               <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
@@ -267,7 +268,7 @@ function LoginSignupPage({setUser, showToast, setIsAuthenticated}) {
 
             
           </CardContent>
-        </Card>
+        </SpotlightCard>
 
         <div className="auth-benefits">
           <div className="benefit-item">

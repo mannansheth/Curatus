@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Button from '../components/Button';
 import { Card, CardContent, CardTitle } from '../components/Card';
 import './ProfileSettings.css';
+import SpotlightCard from '../components/SpotlightCard';
 
 function ProfileSettings({ user }) {
   const [formData, setFormData] = useState({
@@ -44,17 +45,17 @@ function ProfileSettings({ user }) {
 
         <div className="profile-layout">
           {/* Profile Card */}
-          <Card className="profile-card">
+          <SpotlightCard className="profile-card" angle={2}>
             <CardContent>
               <h2>Personal Information</h2>
 
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label>Avatar</label>
                 <div className="avatar-selector">
                   <div className="avatar-display">{formData.avatar}</div>
                   <p>Choose an avatar or emoji</p>
                 </div>
-              </div>
+              </div> */}
 
               <div className="form-group">
                 <label>Full Name</label>
@@ -104,7 +105,7 @@ function ProfileSettings({ user }) {
                 Save Changes
               </Button>
             </CardContent>
-          </Card>
+          </SpotlightCard>
 
           {/* Sidebar */}
           <div className="profile-sidebar">

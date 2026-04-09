@@ -1,8 +1,6 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
-const JWT_SECRET = "your_secret_key_here";
 
 const authRoutes = require("./routes/auth")
 const userRoutes = require("./routes/user") 

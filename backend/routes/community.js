@@ -3,7 +3,7 @@ const db = require("../config/dbConfig");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
-
+const isMessageInvalid = require("../middleware/filterMessage")
 const {JWT_SECRET} = process.env;
 const router = express.Router();
 
@@ -24,7 +24,9 @@ router.post("/message", async (req, res) => {
       }
     }
     const { message } = req.body;
-
+    if (isMessageInvalid(message.content)) {
+      return res.status(200).json({success:false, message: "Please keep the conversation family friendly."})
+    }
 
     
     if (!message || !message.content) {
@@ -38,17 +40,17 @@ router.post("/message", async (req, res) => {
       const ip = req.ip;
 
       const [rows] = await db.query(
-        "SELECT COUNT(*) AS count FROM messages WHERE ipAddress = ? AND createdAt > NOW() - INTERVAL 30 MINUTE",
+        "SELECT COUNT(*) AS count FROM messages WHERE ipAddress = ? AND createdAt > NOW() - INTERVAL 5 MINUTE",
         [ip]
       );
 
       if (rows.length > 0) {
         const count = rows[0].count;
 
-        if (count >= 1) {
+        if (count >= 2) {
           return res.status(200).json({
             success:false,
-            message: "Anonymous users can send only 1 message every 30 minutes"
+            message: "Anonymous users can send only 2 message every 5 minutes"
           });
         }
       }
@@ -63,15 +65,15 @@ router.post("/message", async (req, res) => {
       
 
       const [rows] = await db.query(
-        "SELECT COUNT(*) AS count FROM messages WHERE userID = ? AND createdAt > NOW() - INTERVAL 10 MINUTE",
+        "SELECT COUNT(*) AS count FROM messages WHERE userID = ? AND createdAt > NOW() - INTERVAL 2 MINUTE",
         [userID]
       );
       if (rows.length > 0) {
         const count = new Date(rows[0].count);
-        if (count >=3 ) {
+        if (count >=5 ) {
           return res.status(200).json({
             success:false,
-            message:"You can send only 3 messages every 10 minutes."
+            message:"You can send only 5 messages every 2 minutes."
           })
         }
       }

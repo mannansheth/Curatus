@@ -296,7 +296,7 @@ function AppointmentBooking({ user, showToast }) {
           ) : myAppointments.length > 0 ? (
             <div className="appointments-list">
               {myAppointments.map((apt, i) => (
-                <AppointmentCard key={apt.ID} role={user.role} apt={apt} />
+                <AppointmentCard key={apt.ID} role={user.role} apt={apt} showToast={showToast} />
               ))}
             </div>
           ) : (

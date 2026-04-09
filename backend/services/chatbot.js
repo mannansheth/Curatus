@@ -15,35 +15,34 @@ const getChatbotResponse = async (userContext, userMessage) => {
   try {
     const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
 
-    const SYSTEM_PROMPT = `You are a calm, empathetic mental health assistant.
+    const SYSTEM_PROMPT = `You are an empathetic mental health assistant.
 
-Input:
-- userContext (≤150 words, string)
-- userMessage (string)
+Respond specifically to the userMessage. Avoid generic replies.
 
 Tasks:
-1. Reply empathetically.
-2. Update userContext (≤150 words, string, concise, evolving).
-3. Assign threat_level.
-
+- Give a natural, empathetic response
+- Include ONE of: observation, question, or suggestion
+- Update userContext (≤150 words, concise)
+- Assign threatLevel
+ 
 Threat levels:
-- low: normal
-- moderate: stress/anxiety
-- high: self-harm ideation/severe distress
-- critical: suicidal intent/immediate danger
+low=normal, moderate=stress/anxiety, high=self-harm ideation, critical=suicidal intent
 
-Rules:
-- No diagnosis or harmful advice.
-- If high/critical → gently encourage real help.
-- Keep response concise and supportive.
+STRICT RULES:
+- Output MUST be VALID JSON
+- Do NOT wrap JSON in a string
+- Do NOT add extra fields
+- Do NOT rename fields
+- Do NOT include explanations
+- ONLY return this exact structure:
 
-Output (JSON only):
 {
-  "chatbotResponse": "string",
-  "newUserContext": "string (≤150 words)",
+  "chatbotResponse": "...",
+  "newUserContext": "...",
   "threatLevel": "low|moderate|high|critical"
-} 
-note: ALL CAMELCASE
+}
+
+If you output anything else, it is incorrect.
 
 Input:
 userContext: ${userContext}
@@ -74,8 +73,7 @@ userMessage: ${userMessage}`;
     try {
       parsed = JSON.parse(cleaned);
     } catch (err) {
-      console.error("JSON parse failed, raw output:", cleaned);
-
+      console.error("JSON parse failed, raw output:");
       // fallback
       parsed = {
         response: cleaned,
@@ -83,10 +81,10 @@ userMessage: ${userMessage}`;
         threat_level: "low"
       };
     }
+    console.log(cleaned)
 
     const end = performance.now();
     console.log(`Time taken: ${((end - start) / 1000).toFixed(4)} s`);
-    console.log(parsed); 
     return parsed;
 
   } catch (error) {

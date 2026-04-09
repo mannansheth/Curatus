@@ -18,6 +18,7 @@ align-items: center;
 
 .login-card {
 max-width: 500px;
+padding:30px;
 width: 100%;
 }
 

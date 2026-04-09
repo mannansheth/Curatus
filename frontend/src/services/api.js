@@ -98,7 +98,8 @@ export const userService = {
   
 };
 export const chatbotService = {
-  sendMessage: (message) => api.post("/chatbot/message", {message})
+  sendMessage: (message) => api.post("/chatbot/message", {message}),
+  getMessages: () => api.get("/chatbot/messages")
 }
 
 export default api;

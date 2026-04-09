@@ -100,6 +100,7 @@ function RemarksModal({ apt, onClose, onSaved, showToast }) {
       onSaved(remarks.trim());
       onClose();
     } catch (err) {
+      console.error(err);
       setError(err?.response?.data?.message || 'Failed to save remarks. Try again.');
     } finally {
       setLoading(false);

@@ -14,15 +14,15 @@ router.post("/message", async (req, res) => {
     userContext = dbcontext[0].summary;
   }
   try {
-    const {chatbotResponse, newUserContext, threatLevel} = await getChatbotResponse(userContext, message.text);
+
     const response = await getChatbotResponse(userContext, message.text);
 
-    db.query("INSERT INTO chatbotMessages(userID, message, sender, riskLevel, sentAt) VALUES (?, ?, ?, ?, ?)", [userId, message.text, "user", threatLevel, time])
+    db.query("INSERT INTO chatbotMessages(userID, message, sender, riskLevel, sentAt) VALUES (?, ?, ?, ?, ?)", [userId, message.text, "user", response.threatLevel || response.threat_level, time])
 
-    db.query("INSERT INTO chatbotMessages(userID, message, sender, riskLevel, sentAt) VALUES (?, ?, ?, ?, NOW())", [userId, message.text, "bot", ""])
+    db.query("INSERT INTO chatbotMessages(userID, message, sender, riskLevel, sentAt) VALUES (?, ?, ?, ?, NOW())", [userId, response.chatbotResponse, "bot", ""])
 
-    db.query("INSERT INTO userContext (userID, summary, createdAt) VALUES (?, ?, NOW())", [userId, newUserContext]);
-    return res.json({botReply: {sender: "bot", text:chatbotResponse, timestamp:time}})
+    db.query("INSERT INTO userContext (userID, summary, createdAt) VALUES (?, ?, NOW())", [userId, response.newUserContext]);
+    return res.json({botReply: {sender: "bot", text:response.chatbotResponse, timestamp:time}})
 
   } catch (err) {
     console.error(err);
@@ -30,6 +30,12 @@ router.post("/message", async (req, res) => {
   }
 
 
+})
+
+router.get("/messages", async (req, res) => {
+  const userId = req.userId;
+  const [messages] = await db.query("SELECT sender, message AS text, sentAt AS timestamp FROM chatbotMessages WHERE userID = ?", [userId]);
+  return res.json({messages});
 })
 
 module.exports = router;

@@ -12,7 +12,11 @@ router.post("/book", async (req, res) => {
   const userId = req.userId;
   const {therapistId, date, time} = req.body;
 
-  await db.query("INSERT INTO appointments (userID, therapistID, date, time, status) VALUES (?, ?, ?, ?, ?)", [userId, therapistId, date, time, "upcoming"]);
+  await db.query(`INSERT INTO appointments (userID, therapistID, date, time, status, preRemarks) 
+    VALUES (?, ?, ?, ?, ?, 
+    ( SELECT summary FROM userContext WHERE userID = ? ORDER BY createdAt DESC LIMIT 1
+    )
+    )`, [userId, therapistId, date, time, "upcoming", userId]);
 
   return res.json({success:true});
 
@@ -86,7 +90,6 @@ router.get("/slots", async (req, res) => {
 })
 router.put('/remark', async (req, res) => {
   const {id, remarks} = req.body;
-  console.log(id, remarks)
   await db.query("UPDATE appointments SET postRemarks = ? WHERE ID = ?", [remarks, id]);
 
   return res.json({success:true})
