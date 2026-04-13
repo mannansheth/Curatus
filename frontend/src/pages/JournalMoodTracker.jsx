@@ -3,6 +3,7 @@ import Button from '../components/Button';
 import { Card, CardContent } from '../components/Card';
 import './JournalMoodTracker.css';
 import { journalService } from '../services/api';
+import SpotlightCard from '../components/SpotlightCard';
 
 function JournalMoodTracker({ user, showToast }) {
   const [content, setContent] = useState('');
@@ -103,7 +104,7 @@ function JournalMoodTracker({ user, showToast }) {
       <div className="journal-layout">
 
         <div className="journal-writer">
-          <Card className="writer-card">
+          <SpotlightCard className="writer-card">
             <CardContent>
               <h2>Write Your Thoughts</h2>
               <p className="writer-subtitle">
@@ -127,7 +128,7 @@ function JournalMoodTracker({ user, showToast }) {
                 </Button>
               </form>
             </CardContent>
-          </Card>
+          </SpotlightCard>
         </div>
 
         <div className="journal-entries">
@@ -136,7 +137,7 @@ function JournalMoodTracker({ user, showToast }) {
           <div className="entries-list">
             {entries.length > 0 ? (
               entries.map((entry) => (
-                <Card key={entry.ID} className="entry-item">
+                <SpotlightCard key={entry.ID} className="entry-item">
                   <CardContent>
 
                     <div className="entry-meta">
@@ -180,7 +181,7 @@ function JournalMoodTracker({ user, showToast }) {
                     </div>
 
                   </CardContent>
-                </Card>
+                </SpotlightCard>
               ))
             ) : (
               <div className="empty-state">

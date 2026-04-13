@@ -195,9 +195,11 @@ function AppointmentCard({ apt, onReschedule, onCancel, showToast, role, socket,
 
 
         <div className="apt-card-right">
+          {apt.status === "upcoming" && 
           <div className='notification-badge'>{unread} unread messages</div>
+          }
           <span className={`apt-status-badge apt-status--${apt.status}`}>
-            {apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
+            {apt.status?.charAt(0).toUpperCase() + apt.status?.slice(1)}
           </span>
 
           <div className="apt-card-actions">

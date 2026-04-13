@@ -51,15 +51,26 @@ GROUP BY a.ID;`, [userId, userId]);
 router.get("/therapist", async (req, res) => {
   const userId = req.userId;
   await updateStatus();
-  const [response] = await db.query(`SELECT a.ID, u.Name AS patientName, a.date, a.time, a.status, a.preRemarks, t.mode, t.city, a.postRemarks, COUNT(m.ID) AS unreadCount
-    FROM appointments a 
-    JOIN users u ON u.ID = a.userID
-    JOIN therapists t ON t.userID = a.therapistID
-    LEFT JOIN personalchats m 
+  const [response] = await db.query(`SELECT 
+  a.ID, 
+  u.Name AS patientName, 
+  a.date, 
+  a.time, 
+  a.status, 
+  a.preRemarks, 
+  t.mode, 
+  t.city, 
+  a.postRemarks, 
+  COUNT(m.ID) AS unreadCount
+FROM appointments a 
+JOIN users u ON u.ID = a.userID
+JOIN therapists t ON t.userID = a.therapistID
+LEFT JOIN personalchats m 
   ON m.aptID = a.ID 
-  AND m.sentBy != ? 
+  AND m.sentBy != ?
   AND m.status = 'delivered'
-    WHERE a.therapistID = ?`, [userId, userId]); 
+WHERE a.therapistID = ?
+GROUP BY a.ID;`, [userId, userId]); 
 
   return res.json({appointments: response})
 })

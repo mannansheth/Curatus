@@ -365,7 +365,7 @@ ALTER TABLE `personalchats`
   ADD CONSTRAINT `personalchats_ibfk_2` FOREIGN KEY (`sentBy`) REFERENCES `users` (`ID`);
 
 --
--- Constraints for table `reactions`
+-- Constraiznts for table `reactions`
 --
 ALTER TABLE `reactions`
   ADD CONSTRAINT `reactions_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`ID`),

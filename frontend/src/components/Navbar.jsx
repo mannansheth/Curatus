@@ -110,16 +110,16 @@ function Navbar({ isAuthenticated, user, onLogout }) {
                   >
                     Chat
                   </Link>
+                  <Link
+                    to="/appointment"
+                    className={getClass("/appointment")}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Appointments
+                  </Link>
                 </>
               )}
 
-              <Link
-                to="/appointment"
-                className={getClass("/appointment")}
-                onClick={() => setMenuOpen(false)}
-              >
-                Appointments
-              </Link>
 
               <Link
                 to="/community"

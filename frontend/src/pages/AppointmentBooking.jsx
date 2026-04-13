@@ -292,7 +292,7 @@ function AppointmentBooking({ user, showToast, socket }) {
           ) : (
             <div className="empty-state">
               <span className="empty-icon">📋</span>
-              <p>No appointments yet. {user.role === "user" && "Pick a therapist above to get started!"}</p>
+              <p>No appointments yet. {user.role === "user" && "Pick a therapist below to get started!"}</p>
             </div>
           )}
         </section>
