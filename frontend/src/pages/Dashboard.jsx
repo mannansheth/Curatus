@@ -8,12 +8,13 @@ import './Dashboard.css';
 import SpotlightCard from '../components/SpotlightCard';
 import AppointmentCard from '../components/AppointmentCard';
 
-function Dashboard({ user, showToast }) {
+function Dashboard({ user, showToast, socket }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [appointments, setAppointments] = useState([])
-  useEffect(() => {
+  useEffect(() => { 
+    
     const fetch = async () => {
       try {
         if (user?.role === "user") {
@@ -84,8 +85,8 @@ function Dashboard({ user, showToast }) {
   const recentEntries = data.slice(0, 3);
 
   return (
-    <div className="dashboard">
-      <div className="container">
+    <div className="dashboard" style={{gridTemplateColumns: user.role === "user" ? "1fr 300px" : "1fr"}}>
+      <div className="container" >
         <section className="welcome-section">
           <h1>Welcome back, {user?.name || 'Friend'}!</h1>
           {user.role === "user" ? 
@@ -213,7 +214,7 @@ function Dashboard({ user, showToast }) {
               <h4>No appointments yet</h4>
             }
             {appointments.map(a => (
-              <AppointmentCard key={a.ID} apt={a} onReschedule={true} onCancel={true} showToast={showToast} role={user.role}/>
+              <AppointmentCard key={a.ID} apt={a} onReschedule={true} onCancel={true} showToast={showToast} role={user.role} userId={user.id} socket={socket}/>
 
             ))}
           </>
@@ -222,25 +223,27 @@ function Dashboard({ user, showToast }) {
         
 
       </div>
-      <aside className="chat-sidebar">
-          <Card className="sidebar-card">
-            <CardContent>
-              <h3>📞 Quick Help</h3>
-              <div className="quick-links">
-                <a href="/appointment" className="quick-link">
-                  Book Therapist
-                </a>
-                <a href="/resources" className="quick-link">
-                  View Resources
-                </a>
-                <a href="/emergency" className="quick-link">
-                  Emergency Support
-                </a>
-              </div>
-            </CardContent>
-          </Card>
+      {user.role === "user" && 
+        <aside className="chat-sidebar">
+            <Card className="sidebar-card">
+              <CardContent>
+                <h3>📞 Quick Help</h3>
+                <div className="quick-links">
+                  <a href="/appointment" className="quick-link">
+                    Book Therapist
+                  </a>
+                  <a href="/resources" className="quick-link">
+                    View Resources
+                  </a>
+                  <a href="/emergency" className="quick-link">
+                    Emergency Support
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
 
-        </aside>
+          </aside>
+      }
     </div>
   );
 }

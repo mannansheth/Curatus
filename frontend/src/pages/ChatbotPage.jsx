@@ -4,6 +4,7 @@ import { Card, CardContent } from '../components/Card';
 import './ChatbotPage.css';
 import SpotlightCard from '../components/SpotlightCard';
 import { chatbotService } from '../services/api';
+import { FaInfoCircle } from 'react-icons/fa';
 
 function ChatbotPage({ showToast }) {
   const [messages, setMessages] = useState([
@@ -12,6 +13,7 @@ function ChatbotPage({ showToast }) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const chatRef = useRef(null);
+  const inputRef = useRef(null);
   const suggestedPrompts = [
     'I\'m feeling anxious about work',
     'How can I improve my sleep?',
@@ -25,6 +27,7 @@ function ChatbotPage({ showToast }) {
       try {
         const response = await chatbotService.getMessages();
         setMessages([...messages, ...response.data?.messages]);
+        inputRef.current.focus();
       } catch (err) {
         showToast("Unable to load messages.", "error");
       }
@@ -39,7 +42,7 @@ function ChatbotPage({ showToast }) {
 
   const handleSend = async (text = input) => {
     if (!text.trim()) return;
-
+    
     const userMessage = {
       // id: messages.length + 1,
       sender: 'user',
@@ -52,11 +55,25 @@ function ChatbotPage({ showToast }) {
     setIsLoading(true);
     try {
       const response = await chatbotService.sendMessage(userMessage);
-      setMessages([...messages, userMessage, response.data?.botReply])
+      if (!response.data.success) {
+        showToast(response.data.message)
+      } else {
+        // if (text === "/clrn") {
+        //   setMessages([
+        //     { sender: 'bot', text: 'Hello! I\'m your mental health companion. How are you feeling today?', timestamp: new Date() }
+        //   ])
+        // } else {
+
+        // }
+        setMessages([...messages, userMessage, response.data?.botReply]);
+        
+
+      }
     } catch {
       showToast("Error! Unable to get response.");
       setMessages(messages.slice(0, messages.length -2));
     } finally {
+      inputRef.current.focus();
       setIsLoading(false);
     }
 
@@ -115,7 +132,11 @@ function ChatbotPage({ showToast }) {
                 </div>
               </div>
             )}
+            {/* <div className='chatbot-commands'>
+              <p><FaInfoCircle /> Type /clr to start a new chat with previous memory</p>
+              <p><FaInfoCircle /> Type /clrn to start a new chat without memory</p>
 
+            </div> */}
             <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="chat-form">
               <input
                 type="text"
@@ -124,6 +145,7 @@ function ChatbotPage({ showToast }) {
                 placeholder="Share your thoughts..."
                 className="chat-input"
                 disabled={isLoading}
+                ref={inputRef}
               />
               <Button type="submit" disabled={isLoading || !input.trim()}>
                 Send

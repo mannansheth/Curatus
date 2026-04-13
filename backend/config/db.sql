@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 07, 2026 at 07:01 PM
+-- Generation Time: Apr 13, 2026 at 10:05 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -102,6 +102,21 @@ CREATE TABLE `messages` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `personalchats`
+--
+
+CREATE TABLE `personalchats` (
+  `ID` int(11) NOT NULL,
+  `aptID` int(11) NOT NULL,
+  `content` text NOT NULL,
+  `sentBy` int(11) NOT NULL,
+  `status` enum('read','delivered','','') NOT NULL,
+  `createdAt` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `reactions`
 --
 
@@ -149,7 +164,8 @@ CREATE TABLE `usercontext` (
   `ID` int(11) NOT NULL,
   `userID` int(11) NOT NULL,
   `summary` text NOT NULL,
-  `createdAt` datetime NOT NULL
+  `createdAt` datetime NOT NULL,
+  `isUsable` tinyint(4) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -205,6 +221,14 @@ ALTER TABLE `journal_entries`
 ALTER TABLE `messages`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `userID` (`userID`);
+
+--
+-- Indexes for table `personalchats`
+--
+ALTER TABLE `personalchats`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `aptID` (`aptID`),
+  ADD KEY `sentBy` (`sentBy`);
 
 --
 -- Indexes for table `reactions`
@@ -269,6 +293,12 @@ ALTER TABLE `messages`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `personalchats`
+--
+ALTER TABLE `personalchats`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `reactions`
 --
 ALTER TABLE `reactions`
@@ -326,6 +356,13 @@ ALTER TABLE `journal_entries`
 --
 ALTER TABLE `messages`
   ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`ID`);
+
+--
+-- Constraints for table `personalchats`
+--
+ALTER TABLE `personalchats`
+  ADD CONSTRAINT `personalchats_ibfk_1` FOREIGN KEY (`aptID`) REFERENCES `appointments` (`ID`),
+  ADD CONSTRAINT `personalchats_ibfk_2` FOREIGN KEY (`sentBy`) REFERENCES `users` (`ID`);
 
 --
 -- Constraints for table `reactions`

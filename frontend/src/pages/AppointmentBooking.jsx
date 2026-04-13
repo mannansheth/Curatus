@@ -7,6 +7,7 @@ import './AppointmentBooking.css';
 
 import { SPECIALIZATIONS } from '../data/data';
 import AppointmentCard from '../components/AppointmentCard';
+import UserAvatar from '../components/UserAvatar';
 
 
 const MODES = ['All', 'Online', 'In-person', 'Both'];
@@ -43,18 +44,7 @@ function useDebounce(value, delay) {
 }
 
 
-function TherapistAvatar({ name }) {
-  const initials = name
-    ? name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
-    : '?';
-  const colors = ['#4f46e5', '#7c3aed', '#0891b2', '#059669', '#d97706', '#db2777'];
-  const color = colors[name?.charCodeAt(0) % colors.length] || '#4f46e5';
-  return (
-    <div className="therapist-avatar" style={{ background: `${color}22`, border: `2px solid ${color}44` }}>
-      <span style={{ color }}>{initials}</span>
-    </div>
-  );
-}
+
 
 function StarRating({ rating }) {
   const stars = Math.round(rating || 0);
@@ -145,7 +135,7 @@ function CalendarPicker({ therapist, bookedAppointments, selectedDate, onSelectD
 }
 
 
-function AppointmentBooking({ user, showToast }) {
+function AppointmentBooking({ user, showToast, socket }) {
   // Search & filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [filterSpec, setFilterSpec] = useState('All');
@@ -296,7 +286,7 @@ function AppointmentBooking({ user, showToast }) {
           ) : myAppointments.length > 0 ? (
             <div className="appointments-list">
               {myAppointments.map((apt, i) => (
-                <AppointmentCard key={apt.ID} role={user.role} apt={apt} showToast={showToast} />
+                <AppointmentCard key={apt.ID} role={user.role} apt={apt} showToast={showToast} socket={socket} userId={user.id} />
               ))}
             </div>
           ) : (
@@ -306,7 +296,7 @@ function AppointmentBooking({ user, showToast }) {
             </div>
           )}
         </section>
-        {user.role === "user" && 
+        {user.role === "user" &&  
           <>
             <section className="appointment-header">
               <h1>Find Your Therapist</h1>
@@ -390,7 +380,7 @@ function AppointmentBooking({ user, showToast }) {
                   onKeyDown={e => e.key === 'Enter' && handleSelectTherapist(therapist)}
                 >
                   <div className="therapist-card-inner">
-                    <TherapistAvatar name={therapist.Name} />
+                    <UserAvatar name={therapist.Name} />
                     <div className="therapist-info">
                       <h3>{therapist.Name}</h3>
                       {therapist.degree && <p className="therapist-degree">{therapist.degree}</p>}
@@ -443,7 +433,7 @@ function AppointmentBooking({ user, showToast }) {
             {selectedTherapist && (
               <div className="booking-panel" ref={bookingSectionRef}>
                 <div className="booking-panel-header">
-                  <TherapistAvatar name={selectedTherapist.name} />
+                  <UserAvatar name={selectedTherapist.name} />
                   <div>
                     <h2>Book with {selectedTherapist.name}</h2>
                     <p className="booking-subtitle">
@@ -541,7 +531,7 @@ function AppointmentBooking({ user, showToast }) {
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Confirm Your Booking">
         <div className="modal-content">
           <div className="modal-confirm-details">
-            <TherapistAvatar name={selectedTherapist?.Name} />
+            <UserAvatar name={selectedTherapist?.Name} />
             <div>
               <h3>{selectedTherapist?.Name}</h3>
               <p>{selectedTherapist?.specialization}</p>

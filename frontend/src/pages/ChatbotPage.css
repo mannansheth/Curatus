@@ -27,7 +27,9 @@
 .chat-header h1 {
     margin-bottom: 8px;
 }
-
+.chatbot-commands p {
+    font-size: 0.8rem;
+}
 .chat-header p {
     color: #94a3b8;
     font-size: 1.05rem;

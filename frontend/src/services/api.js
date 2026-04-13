@@ -55,6 +55,9 @@ export const appointmentService = {
   getUserAppointments: () => api.get('/appointments/user'),
   getTherapistAppointments: () => api.get('/appointments/therapist'),
   saveRemarks: ({id, remarks}) => api.put("/appointments/remark", {id, remarks}), 
+  sendMessage: (message, aptId) => api.post("/appointments/chat/message", {message, aptId}), 
+  getMessages: (aptId) => api.get("/appointments/chat/messages", {params: {aptId}}),
+
 
   cancelAppointment: (id) => api.delete(`/appointments/${id}`),
 };
@@ -91,8 +94,8 @@ export const moodService = {
 export const userService = {
   getUserStats: () => api.get('/user/stats'),
   storeAssessment: (data) => api.post("/user/assessment", {data}), 
-
   getUserProfile: () => api.get('/user/profile'),
+
   updateUserProfile: (data) =>
     api.put('/user/profile', data),
   

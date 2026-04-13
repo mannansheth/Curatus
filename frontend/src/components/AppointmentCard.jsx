@@ -3,6 +3,7 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import { appointmentService } from '../services/api';
 import './AppointmentCard.css';
+import { Link } from 'react-router-dom';
 
 const formatDate = (dateObj) =>
       dateObj.getFullYear() +
@@ -55,7 +56,7 @@ function PatientAvatar({ name }) {
   );
 }
 
-function PreRemarksPopover({ remarks, onClose }) {
+function PreRemarksPopover({ remarks, onClose, role }) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -69,11 +70,11 @@ function PreRemarksPopover({ remarks, onClose }) {
   return (
     <div className="preremarks-popover" ref={ref}>
       <div className="preremarks-header">
-        <span>Patient's Note</span>
+        <span>{role === "user" ? "Therapist's" : "Patient's"} Note</span>
         <button className="popover-close" onClick={onClose}>✕</button>
       </div>
       <p className="preremarks-body">
-        {remarks?.trim() ? remarks : <em className="preremarks-empty">No note provided by patient.</em>}
+        {remarks?.trim() ? remarks : <em className="preremarks-empty">No note provided by {role === "user" ? "therapist" : "patient"}.</em>}
       </p>
     </div>
   );
@@ -144,20 +145,37 @@ function RemarksModal({ apt, onClose, onSaved, showToast }) {
   );
 }
 
-function AppointmentCard({ apt, onReschedule, onCancel, showToast, role }) {
+function AppointmentCard({ apt, onReschedule, onCancel, showToast, role, socket, userId }) {
 
 
   const [showRemarksModal, setShowRemarksModal]     = useState(false);
   const [showPreRemarks, setShowPreRemarks]         = useState(false);
   const [savedRemarks, setSavedRemarks]             = useState(apt.postRemarks || '');
+  const [unread, setUnread] = useState(apt.unreadCount);
+
+
+  useEffect(() => {
+    socket.on("new_message_notification", (data) => {
+      console.log(data, userId);
+      
+      if (parseInt(data.aptId) === apt.ID && data.sentBy !== userId) {
+        console.log('hello');
+        
+        setUnread(prev => prev + 1);
+      }
+    });
+
+    return () => {
+      socket.off("new_message_notification");
+    };
+  }, []);
 
   const handleRemarksSaved = (text) => setSavedRemarks(text);
 
   return (
     <>
       <div className={`apt-card apt-card--${apt.status}`}>
-
-        {/* ── Left: avatar + info ── */}
+        
         <div className="apt-card-left">
           <PatientAvatar name={apt.patientName} />
           <div className="apt-card-info">
@@ -177,12 +195,21 @@ function AppointmentCard({ apt, onReschedule, onCancel, showToast, role }) {
 
 
         <div className="apt-card-right">
+          <div className='notification-badge'>{unread} unread messages</div>
           <span className={`apt-status-badge apt-status--${apt.status}`}>
             {apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
           </span>
 
           <div className="apt-card-actions">
-            
+            {apt.status === "upcoming" &&
+              <Link to={`/chat/${btoa(apt.ID)}`} >
+                <button
+                    className="apt-btn apt-btn--primary"
+                  >
+                    Chat 
+                  </button>
+              </Link>
+            }
             {apt.status === "completed" && role === "therapist" ? (
 
               <button
@@ -224,6 +251,7 @@ function AppointmentCard({ apt, onReschedule, onCancel, showToast, role }) {
                     <PreRemarksPopover
                       remarks={role === "user" ? apt.postRemarks : apt.preRemarks}
                       onClose={() => setShowPreRemarks(false)}
+                      role={role}
                     />
                   )}
                 </div>
@@ -231,6 +259,7 @@ function AppointmentCard({ apt, onReschedule, onCancel, showToast, role }) {
             )}
           </div>
         </div>
+
       </div>
 
       {/* ── Remarks Modal (portal via Modal component) ── */}

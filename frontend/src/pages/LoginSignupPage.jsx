@@ -77,7 +77,7 @@ function LoginSignupPage({setUser, showToast, setIsAuthenticated}) {
           }
           setIsAuthenticated(true);
           showToast("Logged in succesfully!", "success");
-          setUser({name:response.data.user.name, email:response.data.user.email, role:response.data.user.role});
+          setUser({id: response.data.user.id, name:response.data.user.name, email:response.data.user.email, role:response.data.user.role});
           navigate("/dashboard");
         }
 
@@ -99,7 +99,7 @@ function LoginSignupPage({setUser, showToast, setIsAuthenticated}) {
         }
         setIsAuthenticated(true);
         showToast("Registered succesfully!", "success");
-        setUser({name:response.data.user.name, email:response.data.user.email, role:response.data.user.role});
+        setUser({id: response.data.user.id, name:response.data.user.name, email:response.data.user.email, role:response.data.user.role});
         navigate("/dashboard");
       }
 

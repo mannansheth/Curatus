@@ -94,8 +94,8 @@ function CommunitySupport({ isAuthenticated, user, showToast }) {
       <div className="chat-container">
 
         <div className="chat-header">
+          <div className="chat-header-dot" />
           <div className="chat-header-inner">
-            <div className="chat-header-dot" />
             <div>
               <h2>Community Chat</h2>
               <p>Talk freely. No login required.</p>

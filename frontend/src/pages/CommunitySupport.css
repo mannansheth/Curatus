@@ -66,12 +66,14 @@
   position: sticky;
   top: 0;
   z-index: 10;
+  width:100%;
 }
 
 .chat-header-inner {
   display: flex;
   align-items: center;
   gap: 14px;
+
 }
 
 .chat-header-dot {

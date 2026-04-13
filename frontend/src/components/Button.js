@@ -11,6 +11,7 @@ function Button({
   className,
   type = 'button',
   fullWidth = false,
+  style
 }) {
   const classes = [
     'btn',
@@ -29,6 +30,7 @@ function Button({
       disabled={disabled || loading}
       onClick={onClick}
       type={type}
+      style={style}
     >
       {loading ? (
         <>

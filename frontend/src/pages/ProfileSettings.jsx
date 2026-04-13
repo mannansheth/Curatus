@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '../components/Button';
 import { Card, CardContent, CardTitle } from '../components/Card';
 import './ProfileSettings.css';
 import SpotlightCard from '../components/SpotlightCard';
+import { userService } from '../services/api';
+import { Link } from 'react-router-dom';
 
-function ProfileSettings({ user }) {
+function ProfileSettings({ user, showToast }) {
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -12,7 +14,19 @@ function ProfileSettings({ user }) {
     bio: '',
     avatar: 'User',
   });
+  const [userData, setUserData] = useState({});
 
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const res = await userService.getUserProfile();
+        setUserData(res.data.userData)
+      } catch {
+        showToast("Error while getting info", "danger")
+      }
+    }
+    getUserData();
+  })
   const [preferences, setPreferences] = useState({
     emailNotifications: true,
     pushNotifications: false,
@@ -42,7 +56,28 @@ function ProfileSettings({ user }) {
           <h1>Profile Settings</h1>
           <p>Manage your account information and preferences</p>
         </section>
+        {user.role === "user" &&
+          <div className="assessment-card-wrapper">
+              <Card className="assessment-card-dsh">
+                <CardContent>
+                  <div className="assessment-content">
+                    <div className="assessment-text">
+                      <h3>Take Your Wellness Assessment Again</h3>
+                      <p>
+                        Get personalized insights and improve your experience by taking a quick mental wellness check.
+                      </p>
+                    </div>
 
+                    <Link to="/assessment">
+                      <Button className="assessment-btn">
+                        Take Assessment Again →
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+        }
         <div className="profile-layout">
           {/* Profile Card */}
           <SpotlightCard className="profile-card" angle={2}>
@@ -86,7 +121,7 @@ function ProfileSettings({ user }) {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="9876543210"
                 />
               </div>
 
@@ -110,49 +145,7 @@ function ProfileSettings({ user }) {
           {/* Sidebar */}
           <div className="profile-sidebar">
             {/* Preferences */}
-            <Card className="preferences-card">
-              <CardContent>
-                <h3>Notification Preferences</h3>
-                <div className="preference-item">
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="emailNotifications"
-                      checked={preferences.emailNotifications}
-                      onChange={handlePreferenceChange}
-                    />
-                    <span>Email Notifications</span>
-                  </label>
-                  <p>Receive updates via email</p>
-                </div>
 
-                <div className="preference-item">
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="pushNotifications"
-                      checked={preferences.pushNotifications}
-                      onChange={handlePreferenceChange}
-                    />
-                    <span>Push Notifications</span>
-                  </label>
-                  <p>Receive app notifications</p>
-                </div>
-
-                <div className="preference-item">
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="monthlyReport"
-                      checked={preferences.monthlyReport}
-                      onChange={handlePreferenceChange}
-                    />
-                    <span>Monthly Report</span>
-                  </label>
-                  <p>Get a summary of your progress</p>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Account Stats */}
             <Card className="stats-card">
@@ -160,15 +153,19 @@ function ProfileSettings({ user }) {
                 <h3>Account Stats</h3>
                 <div className="stat-row">
                   <span>Member Since</span>
-                  <strong>Jan 2026</strong>
+                  <strong>{new Date(userData?.startDate).toLocaleDateString('en-IN', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })}</strong>
                 </div>
                 <div className="stat-row">
                   <span>Journal Entries</span>
-                  <strong>24</strong>
+                  <strong>{userData?.journalEntries}</strong>
                 </div>
                 <div className="stat-row">
                   <span>Community Posts</span>
-                  <strong>5</strong>
+                  <strong>{userData?.communityMessages}</strong>
                 </div>
               </CardContent>
             </Card>

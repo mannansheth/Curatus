@@ -19,6 +19,10 @@ import Toast from './components/Toast';
 import api from './services/api';
 import TherapistSignup from './pages/TherapistSignup';
 import Assessment from './pages/Assessment';
+import PersonalChat from './pages/PersonalChat';
+
+import { io } from 'socket.io-client';
+const socket = io('http://localhost:5000', { autoConnect: false });
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -29,37 +33,51 @@ function App() {
   
   const ProtectedRoute = ({ children }) => {
   if (!isAuthenticated) {
-  return <Navigate to="/login" />;
-  }
-  return children;
+    return <Navigate to="/login" />;
+    }
+    return children;
   };
-
+  const fetchUser = async () => {
+    try {
+      const res = await api.get("/auth/me");
+      setUser(res.data);
+      setIsAuthenticated(true);
+    } catch (err) {
+      console.error(err);
+      localStorage.removeItem("token");
+      setIsAuthenticated(false);
+      setUser(null);
+    } finally {
+      setLoadingAuth(false);
+    }
+  };
   useEffect(() => {
+
     const token = localStorage.getItem("token");
-
-
     if (!token) {
       setLoadingAuth(false);
       return;
     }
-
-    const fetchUser = async () => {
-      try {
-        const res = await api.get("/auth/me");
-        setUser(res.data);
-        setIsAuthenticated(true);
-      } catch (err) {
-        console.error(err);
-        localStorage.removeItem("token");
-        setIsAuthenticated(false);
-        setUser(null);
-      } finally {
-        setLoadingAuth(false);
-      }
-    };
-
+    
     fetchUser();
+
   }, []);
+
+  useEffect(() => {
+    if (!user) return; 
+
+    socket.connect();
+
+    socket.on('connect', () => {
+      console.log("Connected user:", socket.id);
+
+      socket.emit("join_user", user.id);
+    });
+
+    return () => {
+      socket.off('connect');
+    };
+  }, [user]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -116,7 +134,7 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard user={user} showToast={showToast} />
+              <Dashboard user={user} showToast={showToast} socket={socket} />
             </ProtectedRoute>
           }
         />
@@ -170,7 +188,7 @@ function App() {
           path="/appointment"
           element={
             <ProtectedRoute>
-              <AppointmentBooking user={user} showToast={showToast} />
+              <AppointmentBooking user={user} showToast={showToast} socket={socket} />
             </ProtectedRoute>
           }
         />
@@ -178,12 +196,17 @@ function App() {
         <Route path="/therapists" element={<TherapistListing />} />
         <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/emergency" element={<EmergencySupport />} />
-
+        <Route path="/chat/:id" element={
+          <ProtectedRoute>
+            <PersonalChat user={user} showToast={showToast} socket={socket}/>
+          </ProtectedRoute>
+        }
+        />
         <Route
           path="/profile"
           element={
             <ProtectedRoute>
-              <ProfileSettings user={user} />
+              <ProfileSettings user={user} showToast={showToast} />
             </ProtectedRoute>
           }
         />
