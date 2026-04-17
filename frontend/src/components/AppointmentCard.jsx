@@ -234,29 +234,31 @@ function AppointmentCard({ apt, onReschedule, onCancel, showToast, role, socket,
                   </button>
                   <button
                     className="apt-btn apt-btn--danger"
-                    onClick={() => onCancel?.(apt)}
+                    onClick={() => onCancel(apt.ID)}
                   >
                     Cancel
                   </button>
                 </>
                 }
-
-                <div className="preremarks-wrap">
-                  <button
-                    className={`apt-btn apt-btn--note ${showPreRemarks ? 'apt-btn--note-active' : ''}`}
-                    onClick={() => setShowPreRemarks(v => !v)}
-                    title="View patient's pre-session note"
-                  >
-                    📋 Note
-                  </button>
-                  {showPreRemarks && (
-                    <PreRemarksPopover
-                      remarks={role === "user" ? apt.postRemarks : apt.preRemarks}
-                      onClose={() => setShowPreRemarks(false)}
-                      role={role}
-                    />
-                  )}
-                </div>
+                {apt.status !== "cancelled" &&
+                  <div className="preremarks-wrap">
+                    <button
+                      className={`apt-btn apt-btn--note ${showPreRemarks ? 'apt-btn--note-active' : ''}`}
+                      onClick={() => setShowPreRemarks(v => !v)}
+                      title="View patient's pre-session note"
+                    >
+                      📋 Note
+                    </button>
+                    {showPreRemarks && (
+                      <PreRemarksPopover
+                        remarks={role === "user" ? apt.postRemarks : apt.preRemarks}
+                        onClose={() => setShowPreRemarks(false)}
+                        role={role}
+                      />
+                    )}
+                  </div>
+                
+                }
               </>
             )}
           </div>

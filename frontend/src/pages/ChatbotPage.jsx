@@ -8,7 +8,7 @@ import { FaInfoCircle } from 'react-icons/fa';
 
 function ChatbotPage({ showToast }) {
   const [messages, setMessages] = useState([
-    { sender: 'bot', text: 'Hello! I\'m your mental health companion. How are you feeling today?', timestamp: new Date() },
+    { chatID: null, sender: 'bot', text: 'Hello! I\'m your mental health companion. How are you feeling today?', timestamp: new Date() },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -45,6 +45,7 @@ function ChatbotPage({ showToast }) {
     
     const userMessage = {
       // id: messages.length + 1,
+      chatID: messages.at(messages.length - 1).chatID,
       sender: 'user',
       text,
       timestamp: new Date(),
@@ -58,14 +59,14 @@ function ChatbotPage({ showToast }) {
       if (!response.data.success) {
         showToast(response.data.message)
       } else {
-        // if (text === "/clrn") {
-        //   setMessages([
-        //     { sender: 'bot', text: 'Hello! I\'m your mental health companion. How are you feeling today?', timestamp: new Date() }
-        //   ])
-        // } else {
+        if (text.includes("/new")) {
+          setMessages([
+            { chatID: response.data.chatId, sender: 'bot', text: 'Hello! I\'m your mental health companion. How are you feeling today?', timestamp: new Date() }
+          ])
+        } else {
 
-        // }
-        setMessages([...messages, userMessage, response.data?.botReply]);
+          setMessages([...messages, userMessage, response.data?.botReply]);
+        }
         
 
       }
@@ -132,11 +133,11 @@ function ChatbotPage({ showToast }) {
                 </div>
               </div>
             )}
-            {/* <div className='chatbot-commands'>
-              <p><FaInfoCircle /> Type /clr to start a new chat with previous memory</p>
-              <p><FaInfoCircle /> Type /clrn to start a new chat without memory</p>
+            <div className='chatbot-commands'>
+              <p><FaInfoCircle /> Type /newc to start a new chat with previous memory</p>
+              <p><FaInfoCircle /> Type /newnc to start a new chat without memory</p>
 
-            </div> */}
+            </div>
             <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="chat-form">
               <input
                 type="text"

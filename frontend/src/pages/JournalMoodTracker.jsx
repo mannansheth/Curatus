@@ -31,7 +31,6 @@ function JournalMoodTracker({ user, showToast }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-
     if (!content.trim()) {
       showToast('Please write something first', 'warning');
       return;
@@ -104,7 +103,7 @@ function JournalMoodTracker({ user, showToast }) {
       <div className="journal-layout">
 
         <div className="journal-writer">
-          <SpotlightCard className="writer-card">
+          <SpotlightCard className="writer-card" angle={3}>
             <CardContent>
               <h2>Write Your Thoughts</h2>
               <p className="writer-subtitle">

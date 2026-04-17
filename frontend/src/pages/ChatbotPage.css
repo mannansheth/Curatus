@@ -181,6 +181,7 @@
     border-radius: 12px;
     color: #f1f5f9;
     font-size: 1rem;
+    position: sticky;
 }
 
 .chat-input::placeholder {

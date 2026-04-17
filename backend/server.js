@@ -18,7 +18,7 @@ const app = express();
 const httpServer = createServer(app); 
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3000", // your frontend
+    origin: "http://172.20.10.5:3000", 
     credentials: true
   }
 });
@@ -66,6 +66,7 @@ app.use("/api/community", communityRoutes);
 app.use("/api/appointments", authenticateToken, appointmentRoutes);
 app.use("/api/chatbot", authenticateToken, chatbotRoutes);
 app.use("/api/therapist", therapistRoutes);
+
 httpServer.listen(5000, () => {
   console.log("Service started");
   

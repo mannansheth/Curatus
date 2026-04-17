@@ -22,7 +22,7 @@ import Assessment from './pages/Assessment';
 import PersonalChat from './pages/PersonalChat';
 
 import { io } from 'socket.io-client';
-const socket = io('http://localhost:5000', { autoConnect: false });
+const socket = io('http://172.20.10.5:5000/', { autoConnect: false });
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

@@ -9,7 +9,6 @@ const api = axios.create({
   },
 });
 
-// Add token to requests if available
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -18,7 +17,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -57,7 +55,6 @@ export const appointmentService = {
   saveRemarks: ({id, remarks}) => api.put("/appointments/remark", {id, remarks}), 
   sendMessage: (message, aptId) => api.post("/appointments/chat/message", {message, aptId}), 
   getMessages: (aptId) => api.get("/appointments/chat/messages", {params: {aptId}}),
-
 
   cancelAppointment: (id) => api.delete(`/appointments/${id}`),
 };

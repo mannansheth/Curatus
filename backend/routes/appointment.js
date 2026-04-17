@@ -43,6 +43,7 @@ LEFT JOIN personalchats m
   AND m.sentBy != ? 
   AND m.status = 'delivered'
 WHERE a.userID = ?
+AND ((a.status = 'cancelled' AND a.createdAt > NOW() - INTERVAL 3 DAY) OR (a.status <> 'cancelled'))
 GROUP BY a.ID;`, [userId, userId]); 
   
     
@@ -82,9 +83,9 @@ router.get("/slots", async (req, res) => {
   
   const {startTime, endTime} = response[0];
 
-  const [bookedForTherapist] = await db.query("SELECT time FROM appointments WHERE therapistID = ? AND date = ?", [therapistId, date]);
+  const [bookedForTherapist] = await db.query("SELECT time FROM appointments WHERE therapistID = ? AND date = ? AND status <> 'cancelled'", [therapistId, date]);
 
-  const [bookedForUser] = await db.query("SELECT time FROM appointments WHERE userID = ? AND date = ?", [userId, date]);
+  const [bookedForUser] = await db.query("SELECT time FROM appointments WHERE userID = ? AND date = ? AND status <> 'cancelled'", [userId, date]);
 
   const therapistBookedSet = new Set(
     bookedForTherapist.map(b => b.time)
@@ -133,8 +134,8 @@ WHERE (aptID = ?)
   AND sentBy != ?
   AND status = 'delivered';`, [aptId,userId,  userId])
   const [messages] = await db.query(`
-      SELECT content, sentBy, status, createdAt FROM personalchats WHERE aptID = ? OR ? IN (SELECT userID FROM therapists)
-    `, [aptId, userId]);
+      SELECT content, sentBy, status, createdAt FROM personalchats WHERE aptID = ? 
+    `, [aptId]);
   
   const [names] = await db.query(`
       SELECT p.ID AS patientID, p.Name AS patientName, t.ID AS therapistID, t.Name AS therapistName
@@ -205,6 +206,12 @@ const receiverId = row.receiverId;
   }
   return res.json({ success: true });
 });
+router.delete("/:id", async (req,res) => {
+  const {id} = req.params;
+  const [response] = await db.query("UPDATE appointments SET status = 'cancelled' where ID = ?", [id]);
+  
+  return res.json({success:response.affectedRows === 1})
+})
 
  
 module.exports = router;

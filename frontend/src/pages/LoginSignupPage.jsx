@@ -29,15 +29,33 @@ function LoginSignupPage({setUser, showToast, setIsAuthenticated}) {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.email) newErrors.email = 'Email is required';
-    else if (!formData.email.includes('@')) newErrors.email = 'Invalid email format';
 
-    if (!formData.password) newErrors.password = 'Password is required';
-    else if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+    const nameRegex = /^[A-Za-z\s]{2,}$/;
+
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Invalid email format';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (!passwordRegex.test(formData.password)) {
+      newErrors.password = 'Password must be at least 6 characters and include letters and numbers';
+    }
 
     if (!isLogin) {
-      if (!formData.name) newErrors.name = 'Name is required';
-      if (formData.password !== formData.confirmPassword) {
+      if (!formData.name) {
+        newErrors.name = 'Name is required';
+      } else if (!nameRegex.test(formData.name)) {
+        newErrors.name = 'Name should contain only letters and spaces';
+      }
+
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = 'Confirm your password';
+      } else if (formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = 'Passwords do not match';
       }
     }
@@ -50,8 +68,8 @@ function LoginSignupPage({setUser, showToast, setIsAuthenticated}) {
 
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors);
-    return;
+      setErrors(newErrors);
+      return;
     }
 
     setLoading(true);
@@ -59,7 +77,6 @@ function LoginSignupPage({setUser, showToast, setIsAuthenticated}) {
 
     try {
       let response;
-
 
       if (isLogin) {
         response = await authService.login(

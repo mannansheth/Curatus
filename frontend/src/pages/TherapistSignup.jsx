@@ -73,20 +73,25 @@ function TherapistSignup({ showToast, setIsAuthenticated, setUser }) {
 
   const validateForm = () => {
     const e = {};
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+    const numberRegex = /^\+?[\d\s\-()]{7,15}$/;
+    const nameRegex = /^[A-Za-z]+(\.?[\sA-Za-z]+)*$/;
 
     if (!formData.fullName.trim()) e.fullName = 'Full name is required';
+    else if (!nameRegex.test(formData.fullName)) e.fullName = "Enter valid name."
 
     if (!formData.email.trim()) e.email = 'Email is required';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = 'Invalid email format';
+    else if (!emailRegex.test(formData.email)) e.email = 'Invalid email format';
 
     if (!formData.password) e.password = 'Password is required';
-    else if (formData.password.length < 6) e.password = 'Password must be at least 6 characters';
+    else if (!passwordRegex.test(formData.password)) e.password = 'Password must be at least 6 characters';
 
     if (!formData.confirmPassword) e.confirmPassword = 'Please confirm your password';
     else if (formData.password !== formData.confirmPassword) e.confirmPassword = 'Passwords do not match';
 
     if (!formData.phone.trim()) e.phone = 'Phone number is required';
-    else if (!/^\+?[\d\s\-()]{7,15}$/.test(formData.phone)) e.phone = 'Enter a valid phone number';
+    else if (!numberRegex.test(formData.phone)) e.phone = 'Enter a valid phone number';
 
     if (!formData.specialization) e.specialization = 'Please select a specialization';
 
@@ -97,7 +102,7 @@ function TherapistSignup({ showToast, setIsAuthenticated, setUser }) {
       e.yearsOfExperience = 'Please enter a realistic value';
 
     if (!formData.bio.trim()) e.bio = 'Bio is required';
-    else if (formData.bio.trim().length < 50) e.bio = 'Bio should be at least 50 characters';
+    else if (formData.bio.trim().length < 40) e.bio = 'Bio should be at least 40 characters';
 
     if (!formData.city.trim()) e.city = 'City is required';
 
@@ -113,8 +118,11 @@ function TherapistSignup({ showToast, setIsAuthenticated, setUser }) {
 
     if (!formData.startTime) e.startTime = 'Start time is required';
     if (!formData.endTime) e.endTime = 'End time is required';
-    else if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime)
-      e.endTime = 'End time must be after start time';
+    else if (formData.startTime && formData.endTime ) {
+      console.log(formData.startTime, formData.endTime);
+      //e.endTime = 'End time must be after start time';
+      
+    }
 
     return e;
   };
@@ -126,7 +134,9 @@ function TherapistSignup({ showToast, setIsAuthenticated, setUser }) {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       // scroll to first error
+
       const firstErrorField = document.querySelector('.error');
+
       if (firstErrorField) firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
@@ -253,7 +263,6 @@ function TherapistSignup({ showToast, setIsAuthenticated, setUser }) {
                 </div>
               </div>
 
-              {/* ── SECTION: Professional Info ── */}
               <p className="form-section-label">Professional Details</p>
 
               <div className="form-group">
@@ -306,7 +315,7 @@ function TherapistSignup({ showToast, setIsAuthenticated, setUser }) {
               <div className="form-group">
                 <label htmlFor="bio">
                   Bio
-                  <span className="char-hint"> ({formData.bio.length} / 50 min)</span>
+                  <span className="char-hint"> ({formData.bio.length} / 40 min)</span>
                 </label>
                 <textarea
                   id="bio"

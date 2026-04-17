@@ -123,6 +123,7 @@
 
     .nav-menu {
         position: absolute;
+        display:none;
         top: 70px;
         left: 0;
         right: 0;
@@ -139,6 +140,7 @@
 
     .nav-menu.active {
         max-height: 500px;
+        display:block;
     }
 
     .nav-link {

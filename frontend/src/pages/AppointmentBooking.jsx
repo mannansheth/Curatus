@@ -43,21 +43,6 @@ function useDebounce(value, delay) {
   return debounced;
 }
 
-
-
-
-function StarRating({ rating }) {
-  const stars = Math.round(rating || 0);
-  return (
-    <div className="star-rating">
-      {[1,2,3,4,5].map(i => (
-        <span key={i} className={i <= stars ? 'star filled' : 'star'}>★</span>
-      ))}
-      {rating && <span className="rating-num">{Number(rating).toFixed(1)}</span>}
-    </div>
-  );
-}
-
 function ModeChip({ mode }) {
   const map = { online: '💻 Online', 'in-person': '🏥 In-person', both: '🔄 Both' };
   return <span className={`mode-chip mode-chip--${mode}`}>{map[mode] || mode}</span>;
@@ -237,7 +222,6 @@ function AppointmentBooking({ user, showToast, socket }) {
     setSelectedTime('');
   };
 
-
   const handleBooking = async () => {
     if (!selectedTherapist || !selectedDate || !selectedTime) {
       showToast('Please select a date and time slot', 'warning');
@@ -276,6 +260,19 @@ function AppointmentBooking({ user, showToast, socket }) {
     return d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
   };
 
+  const handleCancel =async (id) => {
+    try {
+      const response = await appointmentService.cancelAppointment(id);
+      if (response.data.success) {
+        console.log(myAppointments.filter(p => p.ID !== id));
+        
+        setMyAppointments(prev => prev.filter(p => p.ID !== id))
+        showToast("Appointment deleted", "success");
+      }
+    } catch {
+      showToast("Error in deleting appointment", "warning")
+    }
+  }
   return (
     <div className="appointment-page">
       <div className="container">
@@ -286,7 +283,8 @@ function AppointmentBooking({ user, showToast, socket }) {
           ) : myAppointments.length > 0 ? (
             <div className="appointments-list">
               {myAppointments.map((apt, i) => (
-                <AppointmentCard key={apt.ID} role={user.role} apt={apt} showToast={showToast} socket={socket} userId={user.id} />
+                <AppointmentCard key={apt.ID} role={user.role} apt={apt} showToast={showToast} socket={socket} userId={user.id}
+                onCancel={(id) => handleCancel(id)} />
               ))}
             </div>
           ) : (
@@ -472,9 +470,13 @@ function AppointmentBooking({ user, showToast, socket }) {
                           {availableSlots.map(slot => (
                             <button
                               key={slot.time}
-                              className={`time-slot ${slot.booked ? 'booked' : ''} ${selectedTime === slot.time ? 'active' : ''}`}
-                              onClick={() => !slot.booked && setSelectedTime(slot.time)}
-                              disabled={slot.booked}
+                              className={`time-slot ${slot.booked || new Date(selectedDate + "T" + slot.time) < new Date() ? 'booked' : ''} ${selectedTime === slot.time ? 'active' : ''}`}
+                              onClick={() => {
+                                //console.log(new Date(selectedDate + "T" +slot.time), new Date());
+                                
+                                !slot.booked && setSelectedTime(slot.time)
+                              }}
+                              disabled={slot.booked || new Date(selectedDate + "T" + slot.time) < new Date()}
                               title={slot.booked ? 'Already booked' : ''}
                             >
                               {formatTime12(slot.time)}

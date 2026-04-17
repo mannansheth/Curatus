@@ -11,7 +11,6 @@ def analyze_text(text: str) -> dict:
     # 1. Get emotion + emoji
     emotion_label, emoji = s.get_emotion_emoji(text)
 
-
     sentiment_result = s.sentiment_pipeline(text, truncation=True, max_length=512)[0]
     raw_score = s.SENTIMENT_LABEL_MAP.get(sentiment_result["label"], 0)
     raw_score = s.apply_boosts(text, raw_score, emotion_label)
@@ -24,7 +23,6 @@ def analyze_text(text: str) -> dict:
         "score": score_10,
         "mood": mood,
     }
-
 
 @app.route("/journal/entry/analyze", methods=["POST"])
 def analyze():

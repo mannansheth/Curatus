@@ -63,7 +63,6 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-
     const [users] = await db.query(
     "SELECT * FROM users WHERE email = ?",
     [email]
@@ -85,7 +84,7 @@ router.post("/login", async (req, res) => {
       return res.status(200).json({
         success:false,
         type:"password",
-        message: "Invalid email or password",
+        message: "Invalid password",
       });
     }
 

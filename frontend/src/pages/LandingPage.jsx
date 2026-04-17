@@ -106,10 +106,10 @@ function LandingPage() {
       <section className="hero" ref={heroRef}>
 
         <div className="hero-inner">
-          <div className="hero-eyebrow">
+          {/* <div className="hero-eyebrow">
             <span className="eyebrow-dot" />
             Mental Wellness Platform
-          </div>
+          </div> */}
 
           <h1 className="hero-title">
             Understand
@@ -136,7 +136,7 @@ function LandingPage() {
             </Link>
           </div>
 
-          <div className="hero-stats">
+          {/* <div className="hero-stats">
             <div className="hero-stat">
               <span className="stat-number">10k+</span>
               <span className="stat-label">Active Users</span>
@@ -151,7 +151,7 @@ function LandingPage() {
               <span className="stat-number">4.9★</span>
               <span className="stat-label">User Rating</span>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="hero-graphic">
           <div className="floating-shapes">
