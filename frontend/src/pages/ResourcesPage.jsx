@@ -1,9 +1,20 @@
-import React from 'react';
-import { Card, CardContent, CardTitle } from '../components/Card';
+import React, { useState } from 'react';
+import { CardContent, CardTitle } from '../components/Card';
 import './ResourcesPage.css';
 import SpotlightCard from '../components/SpotlightCard';
 
 function ResourcesPage() {
+  const [selectedArticle, setSelectedArticle] = useState(null);
+  const articleContent = [
+    'Sit comfortably. Breathe gently through your nose and out through your mouth. Count slowly to five each way if comfortable, without forcing or holding your breath. Continue for a few minutes and stop if you feel dizzy.',
+    'Find a comfortable position. Gently tense a muscle group for a few seconds, then release and notice the difference. Work from your feet upward. Avoid injured or painful areas.',
+    'Anxiety can involve persistent worry, physical tension and avoidance. When it affects daily life, a qualified professional can assess your symptoms and discuss therapy or other treatment options.',
+    'CBT explores connections between thoughts, feelings and actions. Notice a difficult thought, consider the evidence for it, and write a balanced alternative. A trained therapist can help tailor this approach.',
+    'Keep consistent sleep and waking times. Create a quiet, dark room, reduce evening caffeine, and put screens away before bed. Discuss persistent sleep problems with a clinician.',
+    'Before bed, focus gently on natural breathing. Notice wandering thoughts and return attention without judging yourself. Keep practice short and comfortable; meditation is optional.',
+    'Choose a calm time to speak. Describe specific observations and your feelings using I statements. Listen without interrupting and check that you understood the other person.',
+    'Identify what you can comfortably offer. State your limit clearly and respectfully, and be consistent. Seek trusted support if communicating a boundary feels unsafe.'
+  ];
   const resources = [
     {
       category: 'Stress Management',
@@ -61,9 +72,9 @@ function ResourcesPage() {
                   <CardContent>
                     <CardTitle>{article.title}</CardTitle>
                     <p>{article.description}</p>
-                    <a href="#read" className="read-more">
+                    <button type="button" className="read-more" onClick={() => setSelectedArticle({ ...article, content: articleContent[index * 2 + idx] })}>
                       Read More →
-                    </a>
+                    </button>
                   </CardContent>
                 </SpotlightCard>
               ))}
@@ -71,6 +82,10 @@ function ResourcesPage() {
           </section>
         ))}
 
+        {selectedArticle && <section className="tip-card" aria-live="polite">
+          <h2>{selectedArticle.title}</h2><p>{selectedArticle.content}</p>
+          <button type="button" onClick={() => setSelectedArticle(null)}>Close article</button>
+        </section>}
         {/* Wellness Tips */}
         <section className="wellness-tips">
           <h2>💡 Daily Wellness Tips</h2>

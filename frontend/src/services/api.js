@@ -20,7 +20,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && localStorage.getItem('token') && !error.config?.url?.includes('/auth/login')) {
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
@@ -34,7 +34,7 @@ export const authService = {
   signup: (email, password, name) =>
     api.post('/auth/signup', { email, password, name }),
   logout: () => api.post('/auth/logout'),
-  me : () => api.post("/auth/me"),
+  me : () => api.get("/auth/me"),
   registerTherapist: (payload) => api.post("/auth/therapist-signup", {...payload})
 };
 
@@ -57,6 +57,7 @@ export const appointmentService = {
   getMessages: (aptId) => api.get("/appointments/chat/messages", {params: {aptId}}),
 
   cancelAppointment: (id) => api.delete(`/appointments/${id}`),
+  rescheduleAppointment: (id, data) => api.put(`/appointments/${id}/reschedule`, data),
 };
 
 export const therapistService = {
@@ -67,7 +68,7 @@ export const therapistService = {
   }),
 
   getTherapistDetails: (id) =>
-    api.get(`/therapists/${id}`),
+    api.get(`/therapist/${id}`),
 };
 
 export const communityService = {
@@ -90,6 +91,8 @@ export const moodService = {
 
 export const userService = {
   getUserStats: () => api.get('/user/stats'),
+  changePassword: (data) => api.put('/user/password', data),
+  deleteAccount: (password) => api.delete('/user/account', { data: { password } }),
   storeAssessment: (data) => api.post("/user/assessment", {data}), 
   getUserProfile: () => api.get('/user/profile'),
 

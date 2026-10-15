@@ -1,8 +1,7 @@
-const db = require("../config/dbConfig")
-
-const updateMessageStatus = async (aptId, userId) => {
-  await db.query(`
-    UPDATE personalchats SET status = 'read' WHERE aptID = ? AND sentBy = ?
-    `, [aptId, userId]);
-}
-module.exports = updateMessageStatus
+const db = require("../config/dbConfig");
+module.exports = async (aptId, userId) => {
+  await db.query(
+    "UPDATE personalchats SET status = 'read' WHERE aptID = ? AND sentBy != ? AND status = 'delivered'",
+    [aptId, userId],
+  );
+};

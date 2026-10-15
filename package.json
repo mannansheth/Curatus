@@ -1,0 +1,15 @@
+{
+  "name": "curatus-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node scripts/test-all.js",
+    "test:coverage": "node scripts/test-all.js --coverage",
+    "test:backend": "npm --prefix backend test",
+    "test:frontend": "npm --prefix frontend test -- --watchAll=false --runInBand",
+    "test:integration": "node scripts/test-integration.js",
+    "build": "npm --prefix frontend run build",
+    "verify": "node scripts/test-all.js --build",
+    "verify:coverage": "node scripts/test-all.js --coverage --build"
+  }
+}

@@ -71,15 +71,6 @@ function MoodLineGraph({ data }) {
 
   const handleMouseLeave = () => setTooltip(null);
 
-  // Total polyline length approximation for stroke-dasharray animation
-  const totalLen = data.length > 1
-    ? data.slice(1).reduce((sum, d, i) => {
-        const x1 = xScale(i); const y1 = yScale(data[i].score);
-        const x2 = xScale(i + 1); const y2 = yScale(d.score);
-        return sum + Math.hypot(x2 - x1, y2 - y1);
-      }, 0)
-    : 0;
-
   return (
     <div className="line-graph-wrap">
       <svg

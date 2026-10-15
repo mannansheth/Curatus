@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../components/Button';
 import { Card, CardContent } from '../components/Card';
@@ -10,17 +10,17 @@ import { SPECIALIZATIONS } from '../data/data';
 function TherapistListing() {
   const [selectedSpecialty, setSelectedSpecialty] = useState('All');
   const [therapists, setTherapists] = useState([])
-  const getTherapists = async () => {
+  const getTherapists = useCallback(async () => {
     try {
       const response = await therapistService.getTherapists("", selectedSpecialty, "", "");
       setTherapists(response?.data?.therapists || []);
     } catch {
       setTherapists([]);
     }
-  }
+  }, [selectedSpecialty]);
   useEffect(() => {
     getTherapists();
-  }, [selectedSpecialty])
+  }, [getTherapists])
   return (
     <div className="therapist-page">
       <div className="container">
@@ -63,7 +63,7 @@ function TherapistListing() {
                 <h3>{therapist.Name}</h3>
                 <p className="therapist-specialty">{therapist.specialization}</p>
                 <p className="therapist-experience">Experience: {therapist.yearsOfExperience}</p>
-                <Link to="/login">
+                <Link to="/appointment">
                   <Button size="sm" fullWidth>
                     Book Session
                   </Button>

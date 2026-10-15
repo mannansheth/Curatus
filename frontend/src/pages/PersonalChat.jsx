@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './CommunitySupport.css';
 import { appointmentService } from '../services/api';
 import UserAvatar from '../components/UserAvatar';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { FaCheckDouble } from 'react-icons/fa6';
 
-const REACTIONS = ['❤️', '🤗', '💪', '😢', '🙏', '👋'];
+
 
 
 function PersonalChat({ user, showToast, socket }) {
@@ -15,8 +15,9 @@ function PersonalChat({ user, showToast, socket }) {
   const [chatWith, setChatWith] = useState("")
   const chatRef = useRef(null);
   const { id } = useParams();
-  const aptId = atob(id);
-  const fetchMessages = async () => {
+  let aptId = null;
+  try { const decoded = atob(id); if (/^\d+$/.test(decoded)) aptId = decoded; } catch {}
+  const fetchMessages = useCallback(async () => {
     try {
       const res = await appointmentService.getMessages(aptId);
       setChatWith(res.data?.chatWith);
@@ -26,8 +27,9 @@ function PersonalChat({ user, showToast, socket }) {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [aptId]);
   useEffect(() => {
+    if (!aptId) return;
     if (!socket.connected) {
       socket.connect();
     }
@@ -39,7 +41,7 @@ function PersonalChat({ user, showToast, socket }) {
     });
 
     const handleReceive = (data) => {
-      if (data.sentBy === user.id) return;
+      if (String(data.aptId) !== String(aptId) || String(data.sentBy) === String(user.id)) return;
       setMessages(prev => [...prev, data]);
       socket.emit("mark_read", {
         aptId,
@@ -47,7 +49,8 @@ function PersonalChat({ user, showToast, socket }) {
       });
     };
 
-    const handleRead = ({ readBy }) => {
+    const handleRead = ({ readBy, aptId: readAppointment }) => {
+      if (String(readAppointment) !== String(aptId)) return;
       if (readBy === user.id) return;
       setMessages(prev =>
         prev.map(msg =>
@@ -62,10 +65,11 @@ function PersonalChat({ user, showToast, socket }) {
     fetchMessages();
 
     return () => {
+      socket.emit('leave_chat', { aptId });
       socket.off('receive_message', handleReceive);
       socket.off('messages_read', handleRead);
     };
-  }, [aptId, user.id]);
+  }, [aptId, user.id, socket, fetchMessages]);
 
   useEffect(() => {
     chatRef.current?.scrollTo(0, chatRef.current.scrollHeight);
@@ -96,6 +100,8 @@ function PersonalChat({ user, showToast, socket }) {
       showToast('Failed to send message', 'error');
     } 
   };
+
+  if (!aptId) return <div role="alert">Invalid appointment chat link.</div>;
 
   return (
     <div className="chat-page">

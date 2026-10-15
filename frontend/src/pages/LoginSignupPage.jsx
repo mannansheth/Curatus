@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
-import { Card, CardContent, CardTitle } from '../components/Card';
+import { CardContent } from '../components/Card';
 import './LoginSignupPage.css';
-import api, { authService } from '../services/api';
+import { authService } from '../services/api';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 import SpotlightCard from '../components/SpotlightCard';
 

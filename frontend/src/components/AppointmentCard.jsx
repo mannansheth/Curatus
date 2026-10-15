@@ -5,14 +5,6 @@ import { appointmentService } from '../services/api';
 import './AppointmentCard.css';
 import { Link } from 'react-router-dom';
 
-const formatDate = (dateObj) =>
-      dateObj.getFullYear() +
-      "-" +
-      String(dateObj.getMonth() + 1).padStart(2, "0") +
-      "-" +
-      String(dateObj.getDate()).padStart(2, "0");
-
-
 function formatDateDisplay(dateStr) {
   if (!dateStr) return '—';
   const d = new Date(dateStr);
@@ -32,13 +24,6 @@ function formatTime12(time24) {
   const hour = h % 12 || 12;
   return `${hour}:${String(m).padStart(2, '0')} ${ampm}`;
 }
-
-function isPast(date, time) {
-  if (!date || !time) return false;
-  const aptDateTime = new Date(`${formatDate(new Date(date))}T${time}`);
-  return aptDateTime < new Date();
-}
-
 
 function PatientAvatar({ name }) {
   const initials = name
@@ -151,24 +136,17 @@ function AppointmentCard({ apt, onReschedule, onCancel, showToast, role, socket,
   const [showRemarksModal, setShowRemarksModal]     = useState(false);
   const [showPreRemarks, setShowPreRemarks]         = useState(false);
   const [savedRemarks, setSavedRemarks]             = useState(apt.postRemarks || '');
-  const [unread, setUnread] = useState(apt.unreadCount);
+  const [unread, setUnread] = useState(apt.unreadCount || 0);
 
 
   useEffect(() => {
-    socket.on("new_message_notification", (data) => {
-      console.log(data, userId);
-      
-      if (parseInt(data.aptId) === apt.ID && data.sentBy !== userId) {
-        console.log('hello');
-        
-        setUnread(prev => prev + 1);
-      }
-    });
-
-    return () => {
-      socket.off("new_message_notification");
+    if (!socket) return;
+    const handleNotification = (data) => {
+      if (String(data.aptId) === String(apt.ID) && String(data.sentBy) !== String(userId)) setUnread(prev => prev + 1);
     };
-  }, []);
+    socket.on('new_message_notification', handleNotification);
+    return () => socket.off('new_message_notification', handleNotification);
+  }, [socket, apt.ID, userId]);
 
   const handleRemarksSaved = (text) => setSavedRemarks(text);
 
@@ -226,12 +204,12 @@ function AppointmentCard({ apt, onReschedule, onCancel, showToast, role, socket,
               <>
                 {apt.status === "upcoming" &&
                 <>
-                  <button
+                  {onReschedule && <button
                     className="apt-btn apt-btn--secondary"
                     onClick={() => onReschedule?.(apt)}
                   >
                     Reschedule
-                  </button>
+                  </button>}
                   <button
                     className="apt-btn apt-btn--danger"
                     onClick={() => onCancel(apt.ID)}

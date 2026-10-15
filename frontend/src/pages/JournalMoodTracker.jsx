@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../components/Button';
-import { Card, CardContent } from '../components/Card';
+import { CardContent } from '../components/Card';
 import './JournalMoodTracker.css';
 import { journalService } from '../services/api';
 import SpotlightCard from '../components/SpotlightCard';
@@ -43,7 +43,8 @@ function JournalMoodTracker({ user, showToast }) {
     const newEntry = {
       ID: tempId,
       content,
-      timestamp: new Date().toLocaleString(),
+      timestamp: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
       loading: true,
       moodScore: null,
       aiMood: "⏳"
@@ -84,12 +85,21 @@ function JournalMoodTracker({ user, showToast }) {
           prev.filter((entry) => entry.ID !== tempId)
         );
 
+        setContent(content);
         showToast('Failed to save entry', 'error');
     } finally {
       setIsSubmitting(false);
     }
 
 
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await journalService.deleteJournal(id);
+      setEntries(prev => prev.filter(entry => entry.ID !== id));
+      showToast('Entry deleted', 'success');
+    } catch { showToast('Unable to delete entry', 'error'); }
   };
 
   return ( <div className="journal-page"> <div className="container">
@@ -157,6 +167,7 @@ function JournalMoodTracker({ user, showToast }) {
                     </div>
 
                     <p className="entry-text">{entry.content}</p>
+                    {!entry.loading && <Button variant="danger" size="sm" onClick={() => handleDelete(entry.ID)}>Delete Entry</Button>}
 
                     <div className="entry-footer">
                       {entry.loading ? (
@@ -169,7 +180,7 @@ function JournalMoodTracker({ user, showToast }) {
                           <div className="score-bar">
                             <div
                               className="score-fill"
-                              style={{ width: `${(entry.score + 2) * 20}%` }}
+                              style={{ width: `${Number(entry.score) * 10}%` }}
                             />
                           </div>
                           <span className="score-value">

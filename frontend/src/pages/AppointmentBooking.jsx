@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
-import { Card, CardContent } from '../components/Card';
 import { therapistService, appointmentService } from '../services/api';
 import './AppointmentBooking.css';
 
@@ -56,7 +55,7 @@ function CalendarPicker({ therapist, bookedAppointments, selectedDate, onSelectD
   const daysInMonth = getDaysInMonth(viewYear, viewMonth);
   const firstDay = getFirstDayOfMonth(viewYear, viewMonth);
 
-  const availableDayNums = (therapist.availableDays.split(" ") || []).map(d => {
+  const availableDayNums = ((therapist.availableDays || "").split(" ") || []).map(d => {
     const idx = FULL_DAY_NAMES.findIndex(n => n.toLowerCase() === d.toLowerCase());
     return idx === -1 ? -1 : idx;
   });
@@ -140,6 +139,7 @@ function AppointmentBooking({ user, showToast, socket }) {
   const [selectedTime, setSelectedTime] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [reschedulingId, setReschedulingId] = useState(null);
 
   const [myAppointments, setMyAppointments] = useState([]);
   const [loadingMine, setLoadingMine] = useState(false);
@@ -147,12 +147,7 @@ function AppointmentBooking({ user, showToast, socket }) {
   const bookingSectionRef = useRef(null);
   const debouncedQuery = useDebounce(searchQuery, 300);
 
-  useEffect(() => {
-    const query = debouncedQuery.trim();
-    fetchTherapists(query);
-  }, [debouncedQuery, filterSpec, filterMode, filterFeeMax]);
-
-  const fetchTherapists = async (query) => {
+  const fetchTherapists = useCallback(async (query) => {
     setLoadingTherapists(true);
     setTherapistsError('');
     try {
@@ -164,13 +159,14 @@ function AppointmentBooking({ user, showToast, socket }) {
     } finally {
       setLoadingTherapists(false);
     }
-  };
+  }, [filterSpec, filterMode, filterFeeMax]);
 
   useEffect(() => {
-    fetchMyAppointments();
-  }, []);
+    const query = debouncedQuery.trim();
+    fetchTherapists(query);
+  }, [debouncedQuery, fetchTherapists]);
 
-  const fetchMyAppointments = async () => {
+  const fetchMyAppointments = useCallback(async () => {
     setLoadingMine(true);
     try {
       var res;
@@ -186,10 +182,15 @@ function AppointmentBooking({ user, showToast, socket }) {
     } finally {
       setLoadingMine(false);
     }
-  };
+  }, [user.role]);
+
+  useEffect(() => {
+    fetchMyAppointments();
+  }, [fetchMyAppointments]);
 
   const handleSelectTherapist = async (therapist) => {
 
+    setReschedulingId(null);
     setSelectedTherapist(therapist);
     setSelectedDate('');
     setSelectedTime('');
@@ -202,7 +203,7 @@ function AppointmentBooking({ user, showToast, socket }) {
     const getAvailableSlots = async () => {
       try {
       const res = await appointmentService.getAvailableSlots(selectedTherapist.userID, selectedDate);
-      console.log(res.data);
+
       setAvailableSlots(res.data?.slots || []);
     } catch {
       setAvailableSlots([]);
@@ -210,16 +211,28 @@ function AppointmentBooking({ user, showToast, socket }) {
       setLoadingSlots(false);
     }
     }
-    if (selectedDate !== "" && selectedTherapist.userID) {
+    if (selectedDate !== "" && selectedTherapist?.userID) {
       
+      setLoadingSlots(true);
       getAvailableSlots();
     }
-  }, [selectedDate])
+  }, [selectedDate, selectedTherapist])
 
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
     setSelectedTime('');
+  };
+
+  const handleReschedule = async (apt) => {
+    try {
+      const response = await therapistService.getTherapistDetails(apt.therapistId || apt.therapistID);
+      const therapist = response.data.therapist || response.data;
+      setSelectedTherapist(therapist);
+      setReschedulingId(apt.ID);
+      setSelectedDate(''); setSelectedTime(''); setAvailableSlots([]);
+      bookingSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch { showToast('Unable to load therapist availability', 'error'); }
   };
 
   const handleBooking = async () => {
@@ -229,12 +242,15 @@ function AppointmentBooking({ user, showToast, socket }) {
     }
     setBookingLoading(true);
     try {
-      await appointmentService.bookAppointment({
-        therapistId: selectedTherapist.ID,
+      const details = {
+        therapistId: selectedTherapist.userID,
         date: selectedDate,
         time: selectedTime,
-      });
-      showToast('Appointment booked successfully!', 'success');
+      };
+      if (reschedulingId) await appointmentService.rescheduleAppointment(reschedulingId, { date: selectedDate, time: selectedTime });
+      else await appointmentService.bookAppointment(details);
+      showToast(reschedulingId ? 'Appointment rescheduled successfully!' : 'Appointment booked successfully!', 'success');
+      setReschedulingId(null);
       setShowModal(false);
       setSelectedTherapist(null);
       setSelectedDate('');
@@ -264,7 +280,7 @@ function AppointmentBooking({ user, showToast, socket }) {
     try {
       const response = await appointmentService.cancelAppointment(id);
       if (response.data.success) {
-        console.log(myAppointments.filter(p => p.ID !== id));
+
         
         setMyAppointments(prev => prev.filter(p => p.ID !== id))
         showToast("Appointment deleted", "success");
@@ -284,6 +300,7 @@ function AppointmentBooking({ user, showToast, socket }) {
             <div className="appointments-list">
               {myAppointments.map((apt, i) => (
                 <AppointmentCard key={apt.ID} role={user.role} apt={apt} showToast={showToast} socket={socket} userId={user.id}
+                onReschedule={user.role === "user" ? handleReschedule : undefined}
                 onCancel={(id) => handleCancel(id)} />
               ))}
             </div>
@@ -403,7 +420,7 @@ function AppointmentBooking({ user, showToast, socket }) {
                       <span className="stat">
                         <span className="stat-label">Days</span>
                         <span className="stat-val">
-                          {(therapist.availableDays.split(" ") || []).map(d => d.slice(0, 3)).join(', ') || '—'}
+                          {((therapist.availableDays || "").split(" ") || []).map(d => d.slice(0, 3)).join(', ') || '—'}
                         </span>
                       </span>
                     </div>
@@ -431,9 +448,9 @@ function AppointmentBooking({ user, showToast, socket }) {
             {selectedTherapist && (
               <div className="booking-panel" ref={bookingSectionRef}>
                 <div className="booking-panel-header">
-                  <UserAvatar name={selectedTherapist.name} />
+                  <UserAvatar name={selectedTherapist.Name} />
                   <div>
-                    <h2>Book with {selectedTherapist.name}</h2>
+                    <h2>Book with {selectedTherapist.Name}</h2>
                     <p className="booking-subtitle">
                       {selectedTherapist.specialization} · ₹{selectedTherapist.consultationFee} / session
                     </p>
@@ -454,7 +471,7 @@ function AppointmentBooking({ user, showToast, socket }) {
                         onSelectDate={handleDateSelect}
                       />
                       <p className="avail-hint">
-                        Available on: {(selectedTherapist.availableDays.split(" ") || []).join(', ') || 'Not specified'}
+                        Available on: {((selectedTherapist.availableDays || "").split(" ") || []).join(', ') || 'Not specified'}
                       </p>
                     </div>
 
@@ -472,7 +489,6 @@ function AppointmentBooking({ user, showToast, socket }) {
                               key={slot.time}
                               className={`time-slot ${slot.booked || new Date(selectedDate + "T" + slot.time) < new Date() ? 'booked' : ''} ${selectedTime === slot.time ? 'active' : ''}`}
                               onClick={() => {
-                                //console.log(new Date(selectedDate + "T" +slot.time), new Date());
                                 
                                 !slot.booked && setSelectedTime(slot.time)
                               }}
@@ -516,7 +532,7 @@ function AppointmentBooking({ user, showToast, socket }) {
                         onClick={() => setShowModal(true)}
                         disabled={!selectedDate || !selectedTime}
                       >
-                        Confirm Booking
+                        {reschedulingId ? "Confirm Reschedule" : "Confirm Booking"}
                       </Button>
                     </div>
                   </div>
@@ -530,7 +546,7 @@ function AppointmentBooking({ user, showToast, socket }) {
       </div>
 
       {/* ── Confirmation Modal ── */}
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Confirm Your Booking">
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={reschedulingId ? "Confirm Your Reschedule" : "Confirm Your Booking"}>
         <div className="modal-content">
           <div className="modal-confirm-details">
             <UserAvatar name={selectedTherapist?.Name} />
@@ -547,7 +563,7 @@ function AppointmentBooking({ user, showToast, socket }) {
           </div>
           <div className="modal-actions">
             <Button variant="secondary" onClick={() => setShowModal(false)}>Go Back</Button>
-            <Button onClick={handleBooking} loading={bookingLoading}>Confirm & Book</Button>
+            <Button onClick={handleBooking} loading={bookingLoading}>{reschedulingId ? "Confirm & Reschedule" : "Confirm & Book"}</Button>
           </div>
         </div>
       </Modal>

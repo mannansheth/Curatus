@@ -1,209 +1,170 @@
-const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const db = require("../config/dbConfig");
-const dotenv = require("dotenv");
-dotenv.config();
-const {JWT_SECRET} = process.env;
-const router = express.Router();
-
-
-router.post("/signup", async (req, res) => {
-  const { email, password, name } = req.body;
-
-  try {
-  // check if user exists
-    const [existingUser] = await db.query(
-    "SELECT * FROM users WHERE email = ?",
-    [email]
-    );
-
-
-    if (existingUser.length > 0) {
-      return res.status(400).json({
-        message: "User already exists",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const [result] = await db.query(
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name, email, hashedPassword]
-    );
-
-    const token = jwt.sign(
-      { id: result.insertId, email, role:"user" },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    res.status(201).json({
-      message: "User created successfully",
-      token,
-      user: {
-        id: result.insertId,
-        name,
-        email,
-        role:"user"
-      },
-    });
-
-
-  } catch (err) {
-    console.error("Signup Error:", err);
-    res.status(500).json({
-    message: "Server error during signup",
+﻿const router = require("express").Router(),
+  db = require("../config/dbConfig"),
+  bcrypt = require("bcryptjs"),
+  jwt = require("jsonwebtoken"),
+  v = require("../lib/validation"),
+  auth = require("../middleware/authenticateToken");
+require("dotenv").config();
+const sign = (id, email, role) =>
+  jwt.sign({ id, email, role }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+    algorithm: "HS256",
   });
+function credentials(body, signup = false) {
+  return (
+    v.email(body.email) &&
+    v.password(body.password) &&
+    (!signup || (body.password.length >= 8 && v.text(body.name, 255)))
+  );
+}
+async function signup(req, res, therapist = false) {
+  const b = req.body;
+  if (!credentials(b, true))
+    return v.fail(
+      res,
+      "Valid name, email and password (8-72 characters) required",
+    );
+  if (
+    therapist &&
+    (!v.text(b.phone, 20) ||
+      !v.text(b.specialization, 255) ||
+      !v.text(b.bio) ||
+      !v.text(b.city, 100) ||
+      [b.address, b.degree, b.certifications].some(
+        (value) =>
+          value != null && (typeof value !== "string" || value.length > 255),
+      ) ||
+      !v.nonnegative(b.yearsOfExperience) ||
+      !Number.isInteger(Number(b.yearsOfExperience)) ||
+      Number(b.yearsOfExperience) < 0 ||
+      !v.nonnegative(b.consultationFee) ||
+      Number(b.consultationFee) < 0 ||
+      !["online", "in-person", "both"].includes(b.mode) ||
+      !Array.isArray(b.availableDays) ||
+      !b.availableDays.length ||
+      b.availableDays.some(
+        (d) =>
+          ![
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+          ].includes(d),
+      ) ||
+      !v.time(b.startTime) ||
+      !v.time(b.endTime) ||
+      b.startTime >= b.endTime)
+  )
+    return v.fail(res, "Invalid therapist profile or availability");
+  const email = b.email.trim().toLowerCase(),
+    name = b.name.trim();
+  const [existing] = await db.query("SELECT ID FROM users WHERE Email = ?", [
+    email,
+  ]);
+  if (existing.length)
+    return res.status(400).json({ message: "User already exists" });
+  const hash = await bcrypt.hash(b.password, 10),
+    conn = await db.getConnection();
+  let id;
+  try {
+    await conn.beginTransaction();
+    const [r] = await conn.query(
+      "INSERT INTO users (Name, Email, Password) VALUES (?, ?, ?)",
+      [name, email, hash],
+    );
+    id = r.insertId;
+    if (therapist)
+      await conn.query(
+        "INSERT INTO therapists (userID, phone, specialization, yearsOfExperience, bio, city, address, consultationFee, mode, availableDays, startTime, endTime, degree, certifications) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          id,
+          b.phone,
+          b.specialization,
+          b.yearsOfExperience,
+          b.bio,
+          b.city,
+          b.address || null,
+          b.consultationFee,
+          b.mode,
+          b.availableDays.join(" "),
+          v.normalizeTime(b.startTime),
+          v.normalizeTime(b.endTime),
+          b.degree || null,
+          b.certifications || null,
+        ],
+      );
+    await conn.commit();
+  } catch (e) {
+    await conn.rollback();
+    if (e.code === "ER_DUP_ENTRY")
+      return res.status(400).json({ message: "User already exists" });
+    throw e;
+  } finally {
+    conn.release();
   }
-});
-
-
+  const role = therapist ? "therapist" : "user";
+  res.status(201).json({
+    success: true,
+    message: "User created successfully",
+    token: sign(id, email, role),
+    user: { id, name, email, role },
+  });
+}
+router.post("/signup", (req, res) => signup(req, res));
+router.post("/therapist-signup", (req, res) => signup(req, res, true));
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const [users] = await db.query(
-    "SELECT * FROM users WHERE email = ?",
-    [email]
-    );
-
-
-    if (users.length === 0) {
-      return res.status(200).json({
-        success:false,
-        type:"email",
-        message: "User not found",
-      });
-    }
-
-    const user = users[0];
-    const isMatch = await bcrypt.compare(password, user.Password);
-
-    if (!isMatch) {
-      return res.status(200).json({
-        success:false,
-        type:"password",
-        message: "Invalid password",
-      });
-    }
-
-    const [isTherapistRows] = await db.query("SELECT 1 FROM therapists WHERE userID = ? LIMIT 1;", [user.ID])
-    const isTherapist = isTherapistRows.length > 0;
-  
-    const token = jwt.sign(
-      { id: user.ID, email: user.Email, role: isTherapist ? "therapist" : "user" },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-    
-    res.json({
-      success:true,
-      message: "Login successful",
-      token,
-      user: {
-        id: user.ID,
-        name: user.Name,
-        email: user.Email,
-        role: isTherapist ? "therapist" : "user"
-      },
+  if (!credentials(req.body))
+    return v.fail(res, "Valid email and password required");
+  const [users] = await db.query(
+    "SELECT ID, Name, Email, Password FROM users WHERE Email = ?",
+    [req.body.email.trim().toLowerCase()],
+  );
+  if (!users.length)
+    return res.json({
+      success: false,
+      type: "email",
+      message: "Invalid email or password",
     });
-
-
-  } catch (err) {
-      console.error("Login Error:", err);
-      res.status(500).json({
-      message: "Server error during login",
-      });
-    }
-});
-
-router.post("/therapist-signup", async (req, res) => {
-  const { email, password, name, phone, specialization, yearsOfExperience, bio, city, address, consultationFee, mode,  availableDays, startTime, endTime, degree, certifications } = req.body;
-
-  try {
-
-    const [existingUser] = await db.query(
-    "SELECT * FROM users WHERE email = ?",
-    [email]
-    );
-
-
-    if (existingUser.length > 0) {
-      return res.status(400).json({
-        message: "User already exists",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const [result] = await db.query(
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name, email, hashedPassword]
-    );
-    const days = availableDays.join(" ");
-    const [result2] = await db.query(
-      "INSERT INTO therapists (userID, phone, specialization, yearsOfExperience, bio, city, address, consultationFee, mode,  availableDays, startTime, endTime, degree, certifications) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [result.insertId, phone, specialization, yearsOfExperience, bio, city, address, consultationFee, mode, days , startTime, endTime, degree, certifications]
-    )
-
-    const token = jwt.sign(
-      { id: result.insertId, email, role: "therapist" },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    
-
-    res.status(201).json({
-      message: "User created successfully",
-      token,
-      user: {
-        id: result.insertId,
-        name,
-        email,
-        role:"therapist"
-      },
+  const u = users[0];
+  if (!(await bcrypt.compare(req.body.password, u.Password)))
+    return res.json({
+      success: false,
+      type: "password",
+      message: "Invalid email or password",
     });
-
-
-  } catch (err) {
-    console.error("Signup Error:", err);
-    res.status(500).json({
-    message: "Server error during signup",
+  const [rows] = await db.query(
+    "SELECT 1 FROM therapists WHERE userID = ? LIMIT 1",
+    [u.ID],
+  );
+  const role = rows.length ? "therapist" : "user";
+  res.json({
+    success: true,
+    message: "Login successful",
+    token: sign(u.ID, u.Email, role),
+    user: { id: u.ID, name: u.Name, email: u.Email, role },
   });
-  }
 });
-
-
-router.get("/me", async (req, res) => {
-  try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-      return res.status(401).json({ message: "No token provided" });
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    const decoded = jwt.verify(token, JWT_SECRET);
-
-    const [users] = await db.query(
-      "SELECT id, name, email FROM users WHERE id = ?",
-      [decoded.id]
-    );
-
-    if (users.length === 0) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.json({...users[0], role: decoded.role});
-
-  } catch (err) {
-    console.error("Auth Me Error:", err);
-    res.status(401).json({ message: "Invalid or expired token" });
-  }
+router.get("/me", auth, async (req, res) => {
+  const [users] = await db.query(
+    "SELECT ID AS id, Name AS name, Email AS email FROM users WHERE ID = ?",
+    [req.userId],
+  );
+  if (!users.length) return res.status(404).json({ message: "User not found" });
+  const [rows] = await db.query(
+    "SELECT 1 FROM therapists WHERE userID = ? LIMIT 1",
+    [req.userId],
+  );
+  res.json({ ...users[0], role: rows.length ? "therapist" : "user" });
 });
-
-
+router.post("/logout", auth, (req, res) => res.json({ success: true }));
 module.exports = router;

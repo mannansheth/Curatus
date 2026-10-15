@@ -20,11 +20,11 @@ function Dashboard({ user, showToast, socket }) {
         if (user?.role === "user") {
           const res = await userService.getUserStats();
           setHasSubmitted(res.data.hasSubmitted);
-          setData(res.data.entries);
+          setData(res.data.entries || []);
 
         } else {
           const res = await appointmentService.getTherapistAppointments();
-          setAppointments(res.data?.appointments);
+          setAppointments(res.data?.appointments || []);
 
         }
       } catch (err) {
@@ -214,7 +214,10 @@ function Dashboard({ user, showToast, socket }) {
               <h4>No appointments yet</h4>
             }
             {appointments.map(a => (
-              <AppointmentCard key={a.ID} apt={a} onReschedule={true} onCancel={true} showToast={showToast} role={user.role} userId={user.id} socket={socket}/>
+              <AppointmentCard key={a.ID} apt={a} onCancel={async id => {
+                try { await appointmentService.cancelAppointment(id); setAppointments(prev => prev.filter(apt => apt.ID !== id)); showToast('Appointment cancelled', 'success'); }
+                catch { showToast('Unable to cancel appointment', 'error'); }
+              }} showToast={showToast} role={user.role} userId={user.id} socket={socket}/>
 
             ))}
           </>

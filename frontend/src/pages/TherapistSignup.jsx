@@ -119,8 +119,7 @@ function TherapistSignup({ showToast, setIsAuthenticated, setUser }) {
     if (!formData.startTime) e.startTime = 'Start time is required';
     if (!formData.endTime) e.endTime = 'End time is required';
     else if (formData.startTime && formData.endTime ) {
-      console.log(formData.startTime, formData.endTime);
-      //e.endTime = 'End time must be after start time';
+      if (formData.endTime <= formData.startTime) e.endTime = 'End time must be after start time';
       
     }
 
@@ -172,7 +171,7 @@ function TherapistSignup({ showToast, setIsAuthenticated, setUser }) {
 
       setIsAuthenticated(true);
       showToast('Therapist account created successfully!', 'success');
-      setUser({ name: response.data.user.name, email: response.data.user.email, role: response.data.user.role });
+      setUser(response.data.user);
       navigate('/dashboard');
     } catch (err) {
       console.error('Therapist Signup Error:', err);

@@ -25,7 +25,7 @@ function Navbar({ isAuthenticated, user, onLogout }) {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-brand">
-        <img src="/images/logo2.png" width={200} height={100}></img>
+        <img alt="Curatus" src={`${process.env.PUBLIC_URL || ""}/images/logo2.png`} width={200} height={100}></img>
           {/* <span className="brand-text">Curatus</span> */}
         </Link>
 

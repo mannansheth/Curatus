@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Button from '../components/Button';
-import { Card, CardContent, CardTitle } from '../components/Card';
+import { Card, CardContent } from '../components/Card';
 import './ProfileSettings.css';
 import SpotlightCard from '../components/SpotlightCard';
 import { userService } from '../services/api';
 import { Link } from 'react-router-dom';
 
-function ProfileSettings({ user, showToast }) {
+function ProfileSettings({ user, setUser, onLogout, showToast }) {
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -20,32 +20,50 @@ function ProfileSettings({ user, showToast }) {
     const getUserData = async () => {
       try {
         const res = await userService.getUserProfile();
-        setUserData(res.data.userData)
+        setUserData(res.data.userData || {});
+        const profile = res.data.profile || res.data.user || res.data.userData || {};
+        setFormData(prev => ({ ...prev, ...profile }));
       } catch {
         showToast("Error while getting info", "danger")
       }
     }
     getUserData();
-  })
-  const [preferences, setPreferences] = useState({
-    emailNotifications: true,
-    pushNotifications: false,
-    monthlyReport: true,
-  });
-
+  }, [showToast])
+  const [saving, setSaving] = useState(false);
+  const [accountAction, setAccountAction] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handlePreferenceChange = (e) => {
-    const { name, checked } = e.target;
-    setPreferences({ ...preferences, [name]: checked });
+  const handleSave = async () => {
+    if (!formData.name.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      showToast('Enter a name and valid email address', 'error'); return;
+    }
+    setSaving(true);
+    try {
+      await userService.updateUserProfile(formData);
+      setUser?.(prev => ({ ...prev, name: formData.name, email: formData.email }));
+      showToast('Profile saved', 'success');
+    } catch (err) { showToast(err.response?.data?.message || 'Unable to save profile', 'error'); }
+    finally { setSaving(false); }
   };
-
-  const handleSave = () => {
-    // Handle save
-    console.log('Profile updated:', formData);
+  const handleAccountAction = async (event) => {
+    event.preventDefault();
+    setSaving(true);
+    try {
+      if (accountAction === 'password') {
+        await userService.changePassword({ currentPassword, newPassword });
+        showToast('Password changed', 'success');
+      } else {
+        await userService.deleteAccount(currentPassword);
+        onLogout?.();
+      }
+      setAccountAction(''); setCurrentPassword(''); setNewPassword('');
+    } catch (err) { showToast(err.response?.data?.message || 'Account operation failed', 'error'); }
+    finally { setSaving(false); }
   };
 
   return (
@@ -136,7 +154,7 @@ function ProfileSettings({ user, showToast }) {
                 ></textarea>
               </div>
 
-              <Button size="lg" fullWidth onClick={handleSave}>
+              <Button size="lg" fullWidth onClick={handleSave} loading={saving}>
                 Save Changes
               </Button>
             </CardContent>
@@ -174,13 +192,20 @@ function ProfileSettings({ user, showToast }) {
             <Card className="danger-card">
               <CardContent>
                 <h3>Danger Zone</h3>
-                <Button variant="danger" size="sm" fullWidth>
+                <Button variant="danger" size="sm" fullWidth onClick={() => setAccountAction("password")}>
                   Change Password
                 </Button>
-                <Button variant="danger" size="sm" fullWidth style={{ marginTop: '8px' }}>
+                <Button variant="danger" size="sm" fullWidth style={{ marginTop: '8px' }} onClick={() => setAccountAction("delete")}>
                   Delete Account
                 </Button>
               </CardContent>
+              {accountAction && <form onSubmit={handleAccountAction}>
+                <p>{accountAction === 'delete' ? 'Deleting your account permanently removes your personal data. Enter your password to confirm.' : 'Enter your current and new password.'}</p>
+                <label>Current password<input type="password" required value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} /></label>
+                {accountAction === 'password' && <label>New password<input type="password" required minLength={8} value={newPassword} onChange={e => setNewPassword(e.target.value)} /></label>}
+                <Button type="submit" loading={saving}>Confirm {accountAction === 'delete' ? 'deletion' : 'password change'}</Button>
+                <Button type="button" onClick={() => setAccountAction('')}>Cancel</Button>
+              </form>}
             </Card>
           </div>
         </div>

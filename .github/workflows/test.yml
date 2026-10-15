@@ -1,0 +1,42 @@
+name: Test Curatus
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: integration-password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: npm ci --prefix backend
+      - run: npm ci --prefix frontend
+      - run: python -m pip install -r backend-py/requirements-test.txt
+      - run: npm run verify:coverage
+        env:
+          CURATUS_TEST_PYTHON: python
+          JWT_SECRET: ci-only-secret-for-tests
+      - run: npm run test:integration
+        env:
+          CURATUS_TEST_PYTHON: python
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_USER: root
+          MYSQL_PASS: integration-password

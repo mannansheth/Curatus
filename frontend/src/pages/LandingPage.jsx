@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Button from '../components/Button';
 import './LandingPage.css';
 import SpotlightCard from '../components/SpotlightCard';
 

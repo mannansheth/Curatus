@@ -15,6 +15,7 @@ function Assessment() {
   const [error, setError]           = useState('');
   const [loading, setLoading]       = useState(false);
   const [submitted, setSubmitted]   = useState(false);
+  const [reflection, setReflection] = useState(null);
 
   const answeredCount = Object.values(responses).filter(v => v !== null).length;
   const progress = (answeredCount / QUESTIONS.length) * 100;
@@ -26,7 +27,6 @@ function Assessment() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(responses);
     const unanswered = QUESTIONS.filter(q => responses[q.key] === null);
     if (unanswered.length > 0) {
       setError(`Please answer all questions — ${unanswered.length} remaining.`);
@@ -39,7 +39,8 @@ function Assessment() {
     setError('');
 
     try {
-      await userService.storeAssessment(responses);
+      const result = await userService.storeAssessment(responses);
+      setReflection(result.data);
       setSubmitted(true);
     } catch (err) {
       setError(
@@ -61,6 +62,11 @@ function Assessment() {
           <p className="success-subtitle">
             Thank you for checking in with yourself. Your responses have been saved.
           </p>
+          {Number.isFinite(reflection?.score) && <section className="reflection-result" aria-live="polite">
+            <h3>Wellness reflection: {reflection.score}/100</h3>
+            <p>{reflection.feedback}</p>
+            <p>This informal self-reflection is not a diagnosis or a clinical assessment.</p>
+          </section>}
           <div className="success-scores">
             {QUESTIONS.map(q => (
               <div key={q.key} className="score-row">

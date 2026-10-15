@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx nodemon server.js"
+    "test": "node --test tests/*.test.js",
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test:coverage": "node --experimental-test-coverage --test-coverage-exclude=tests/** --test tests/*.test.js"
   },
   "author": "Mannan",
   "license": "ISC",
@@ -12,14 +14,17 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "axios": "^1.14.0",
-    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.20.0",
-    "nodemon": "^3.1.14",
     "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.10",
+    "socket.io-client": "^4.8.4",
+    "supertest": "^7.3.1"
   }
 }

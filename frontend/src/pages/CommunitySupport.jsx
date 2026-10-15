@@ -8,7 +8,7 @@ function CommunitySupport({ isAuthenticated, user, showToast }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(true);
-  const [name, setName] = useState(user?.name);
+  const [name, setName] = useState(user?.name || "");
   const [reactingTo, setReactingTo] = useState(null);
   const chatRef = useRef(null);
 
@@ -62,7 +62,8 @@ function CommunitySupport({ isAuthenticated, user, showToast }) {
         showToast(response.data.message, "error");
         
       } else {
-        setMessages((prev) => [...prev, message]);
+        const refreshed = await communityService.getMessages();
+        setMessages(refreshed.data.messages || []);
         setInput('');
       }
     } catch (err) {
@@ -78,7 +79,7 @@ function CommunitySupport({ isAuthenticated, user, showToast }) {
     
     try {
       const response = await communityService.addReaction(msgId, emoji);
-      setMessages(response?.data?.messages)
+      setMessages(response?.data?.messages || [])
     } catch (err) {
       console.error(err);
     } 
@@ -129,7 +130,7 @@ function CommunitySupport({ isAuthenticated, user, showToast }) {
                         <button
                           key={emoji}
                           className="reaction-pill"
-                          onClick={(e) => handleReact(e, msg.id, emoji)}
+                          onClick={(e) => handleReact(e, msg.ID, emoji)}
                         >
                           {emoji} <span>{count}</span>
                         </button>

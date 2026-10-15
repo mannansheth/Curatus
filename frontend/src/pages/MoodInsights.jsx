@@ -1,6 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import Button from '../components/Button';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '../components/Card';
 import { userService } from '../services/api';
 import './MoodInsights.css';
@@ -15,7 +13,7 @@ function MoodInsights({ user }) {
     const fetchData = async () => {
       try {
         const res = await userService.getUserStats();
-        const sorted = res.data.entries.sort(
+        const sorted = (res.data.entries || []).slice().sort(
           (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
         );
         setData(sorted);
@@ -27,6 +25,7 @@ function MoodInsights({ user }) {
     };
 
     if (user) fetchData();
+    else setLoading(false);
   }, [user]);
 
   if (loading) {
@@ -80,7 +79,7 @@ function MoodInsights({ user }) {
       d.getFullYear() + '-' +
       String(d.getMonth() + 1).padStart(2, '0') + '-' +
       String(d.getDate()).padStart(2, '0');
-    const days = [...new Set(data.map(e => formatDate(new Date(e.createdAt))))].sort();
+    const days = [...new Set(entries.map(e => formatDate(new Date(e.createdAt))))].sort();
 
     let longest = 1, temp = 1;
     for (let i = 1; i < days.length; i++) {
@@ -132,7 +131,7 @@ function MoodInsights({ user }) {
                 <div
                   key={index}
                   className="mood-cell"
-                  style={{ opacity: 0.3 + day.mood / 10 }}
+                  style={{ opacity: 0.3 + (Number(day.mood) / 10) * 0.7 }}
                   title={`${day.emoji} ${day.mood}/10`}
                 >
                   <span className="mood-emoji">{day.emoji}</span>

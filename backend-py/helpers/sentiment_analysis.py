@@ -104,42 +104,41 @@ KEYWORD_EMOJI_MAP = [
 
 
 import re
+import math
+from numbers import Real
 
 def get_keyword_emoji(text: str) -> str | None:
     lower = text.lower()
-    words = re.findall(r'\b\w+\b', lower)
 
     for keywords, emoji in KEYWORD_EMOJI_MAP:
         for kw in keywords:
-            if " " in kw:
-                if kw in lower:   # phrase match
-                    return emoji
-            else:
-                if kw in words:   # word match (FIXES YOUR BUG)
-                    return emoji
+            if re.search(r"(?<!\w)" + re.escape(kw) + r"(?!\w)", lower):
+                return emoji
     return None
 
-from transformers import pipeline
-import torch
+from functools import lru_cache
+from threading import Lock
 
 EMOTION_MODEL = "j-hartmann/emotion-english-distilroberta-base"
-
 SENTIMENT_MODEL = "tabularisai/multilingual-sentiment-analysis"
+_MODEL_LOCK = Lock()
 
-device = 0 if torch.cuda.is_available() else -1
+@lru_cache(maxsize=2)
+def _load_pipeline(model: str):
+    # Import and download only when analysis needs a model.
+    from transformers import pipeline
+    import torch
+    options = {"top_k": None} if model == EMOTION_MODEL else {}
+    return pipeline("text-classification", model=model,
+                    device=0 if torch.cuda.is_available() else -1, **options)
 
-emotion_pipeline = pipeline(
-    "text-classification",
-    model=EMOTION_MODEL,
-    top_k=None,          # returns ALL emotion scores
-    device=device
-)
+def emotion_pipeline(text, **kwargs):
+    with _MODEL_LOCK:
+        return _load_pipeline(EMOTION_MODEL)(text, **kwargs)
 
-sentiment_pipeline = pipeline(
-    "text-classification",
-    model=SENTIMENT_MODEL,
-    device=device
-)
+def sentiment_pipeline(text, **kwargs):
+    with _MODEL_LOCK:
+        return _load_pipeline(SENTIMENT_MODEL)(text, **kwargs)
 
 def get_emotion_emoji(text: str) -> tuple[str, str]:
     """
@@ -159,39 +158,27 @@ def get_emotion_emoji(text: str) -> tuple[str, str]:
 
 
 def convert_score_to_10_scale(raw: int, confidence: float) -> int:
-    """
-    Improved scoring:
-    - Uses sentiment class
-    - Uses confidence
-    - Expands range naturally
-    """
+    """Map sentiment to 1..10; confidence increases distance from neutral."""
+    if (type(raw) is not int or raw not in MOOD_MAP
+            or isinstance(confidence, bool) or not isinstance(confidence, Real)
+            or not math.isfinite(confidence) or not 0 <= confidence <= 1):
+        raise ValueError("Invalid sentiment score or confidence")
+    value = 5.5 + (raw / 2) * 4.5 * (0.5 + confidence / 2)
+    return max(1, min(10, int(round(value))))
 
-    # Base score from sentiment
-    base = ((raw + 2) / 4) * 9 + 1   # maps -2..2 → 1..10
-
-    confidence_adjustment = (confidence - 0.5) * 4 
-
-    final = base + confidence_adjustment
-
-    return max(1, min(10, int(round(final))))
 
 def apply_boosts(text: str, raw_score: int, emotion_label: str) -> int:
     lower = text.lower()
-
-    # 🔥 Strong achievement boost
-    if any(p in lower for p in ["full marks", "100%", "aced", "nailed", "perfect"]):
-        raw_score = min(raw_score + 1, 2)
-
-    # 💪 confidence/self-belief boost
-    if any(p in lower for p in ["confident", "i will", "sure i will"]):
-        raw_score = min(raw_score + 1, 2)
-
-    # 😄 emotion-based boost
-    if emotion_label == "joy" and raw_score == 1:
-        raw_score = 2
-
-    # 😢 negative emotion correction
+    # Avoid reversing an explicitly negative model classification or negated claim.
+    negated = bool(re.search(r"\b(?:not|never|no|hardly|isn't|wasn't|don't|didn't|can't)\b", lower))
+    if raw_score >= 0 and not negated:
+        if any(re.search(r"(?<!\w)" + re.escape(p) + r"(?!\w)", lower)
+               for p in ["full marks", "100%", "aced", "nailed it", "perfect score"]):
+            raw_score = min(raw_score + 1, 2)
+        if re.search(r"\bconfident\b", lower):
+            raw_score = min(raw_score + 1, 2)
+        if emotion_label == "joy" and raw_score == 1:
+            raw_score = 2
     if emotion_label == "sadness" and raw_score > 0:
         raw_score = 0
-
     return raw_score

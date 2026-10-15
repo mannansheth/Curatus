@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Button from '../components/Button';
-import { Card, CardContent } from '../components/Card';
 import './ChatbotPage.css';
 import SpotlightCard from '../components/SpotlightCard';
 import { chatbotService } from '../services/api';
@@ -26,55 +25,59 @@ function ChatbotPage({ showToast }) {
 
       try {
         const response = await chatbotService.getMessages();
-        setMessages([...messages, ...response.data?.messages]);
-        inputRef.current.focus();
+        setMessages(prev => [prev[0], ...(response.data?.messages || [])]);
+        inputRef.current?.focus();
       } catch (err) {
         showToast("Unable to load messages.", "error");
       }
 
     }
     fetchMessages();
-  }, [])
+  }, [showToast])
 
    useEffect(() => {
       chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: 'smooth' });
     }, [messages]);
 
   const handleSend = async (text = input) => {
-    if (!text.trim()) return;
+    if (isLoading || !text.trim()) return;
+    text = text.trim();
     
     const userMessage = {
       // id: messages.length + 1,
-      chatID: messages.at(messages.length - 1).chatID,
+      chatID: messages[messages.length - 1]?.chatID,
       sender: 'user',
       text,
       timestamp: new Date(),
     };
 
-    setMessages([...messages, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
     try {
       const response = await chatbotService.sendMessage(userMessage);
       if (!response.data.success) {
-        showToast(response.data.message)
+        showToast(response.data.message, "error");
+        setMessages(prev => prev.filter(msg => msg !== userMessage));
+        setInput(text)
       } else {
-        if (text.includes("/new")) {
+        if (["/newc", "/newnc"].includes(text.trim())) {
           setMessages([
             { chatID: response.data.chatId, sender: 'bot', text: 'Hello! I\'m your mental health companion. How are you feeling today?', timestamp: new Date() }
           ])
         } else {
 
-          setMessages([...messages, userMessage, response.data?.botReply]);
+          setMessages(prev => [...prev, { ...response.data.botReply, chatID: response.data.chatId || userMessage.chatID }]);
         }
         
 
       }
     } catch {
       showToast("Error! Unable to get response.");
-      setMessages(messages.slice(0, messages.length -2));
+      setMessages(prev => prev.filter(msg => msg !== userMessage));
+      setInput(text);
     } finally {
-      inputRef.current.focus();
+      inputRef.current?.focus();
       setIsLoading(false);
     }
 

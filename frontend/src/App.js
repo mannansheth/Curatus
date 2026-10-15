@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
@@ -22,7 +22,12 @@ import Assessment from './pages/Assessment';
 import PersonalChat from './pages/PersonalChat';
 
 import { io } from 'socket.io-client';
-const socket = io('http://172.20.10.5:5000/', { autoConnect: false });
+const socketUrl = process.env.REACT_APP_SOCKET_URL || (process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000/api').replace(/\/api\/?$/, '');
+const socket = io(socketUrl, { autoConnect: false, auth: (cb) => cb({ token: localStorage.getItem('token') }) });
+
+function ProtectedRoute({ isAuthenticated, children }) {
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+}
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -31,12 +36,6 @@ function App() {
   const [loadingAuth, setLoadingAuth] = useState(true);
 
   
-  const ProtectedRoute = ({ children }) => {
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-    }
-    return children;
-  };
   const fetchUser = async () => {
     try {
       const res = await api.get("/auth/me");
@@ -69,27 +68,28 @@ function App() {
     socket.connect();
 
     socket.on('connect', () => {
-      console.log("Connected user:", socket.id);
 
       socket.emit("join_user", user.id);
     });
 
     return () => {
       socket.off('connect');
+      socket.disconnect();
     };
   }, [user]);
 
   const handleLogout = () => {
+    socket.disconnect();
     localStorage.removeItem("token");
     setIsAuthenticated(false);
     setUser(null);
     showToast('Logged out successfully', 'info');
   };
 
-  const showToast = (message, type = 'info') => {
+  const showToast = useCallback((message, type = 'info') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
-  };
+  }, []);
 
 
   if (loadingAuth) {
@@ -133,7 +133,7 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
               <Dashboard user={user} showToast={showToast} socket={socket} />
             </ProtectedRoute>
           }
@@ -143,7 +143,7 @@ function App() {
             <Route
               path="/journal"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
                   <JournalMoodTracker user={user} showToast={showToast} />
                 </ProtectedRoute>
               }
@@ -151,7 +151,7 @@ function App() {
             <Route
               path="/assessment"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
                   <Assessment  />
                 </ProtectedRoute>
               }
@@ -165,7 +165,7 @@ function App() {
             <Route
               path="/chatbot"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
                   <ChatbotPage user={user} showToast={showToast}/>
                 </ProtectedRoute>
               }
@@ -187,7 +187,7 @@ function App() {
         <Route
           path="/appointment"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
               <AppointmentBooking user={user} showToast={showToast} socket={socket} />
             </ProtectedRoute>
           }
@@ -197,7 +197,7 @@ function App() {
         <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/emergency" element={<EmergencySupport />} />
         <Route path="/chat/:id" element={
-          <ProtectedRoute>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
             <PersonalChat user={user} showToast={showToast} socket={socket}/>
           </ProtectedRoute>
         }
@@ -205,11 +205,12 @@ function App() {
         <Route
           path="/profile"
           element={
-            <ProtectedRoute>
-              <ProfileSettings user={user} showToast={showToast} />
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ProfileSettings user={user} setUser={setUser} onLogout={handleLogout} showToast={showToast} />
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />} />
       </Routes>
 
       {toast && (

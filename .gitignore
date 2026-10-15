@@ -1,0 +1,13 @@
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.coverage
+coverage/
+build/
+.env
+.env.local
+test-results/
+*.log
+docs/
